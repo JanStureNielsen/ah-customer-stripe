@@ -1,0 +1,4 @@
+application-description: @project.description@
+application-version: @project.version@
+stripe:
+  sk: sk_test_Sk4w8QhXofGiwwazoJ5PMSIg
