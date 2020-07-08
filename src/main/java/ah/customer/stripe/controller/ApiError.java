@@ -1,12 +1,14 @@
 package ah.customer.stripe.controller;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
-import org.springframework.http.HttpStatus;
-
 import java.time.LocalDateTime;
 
-@Data
+import org.springframework.http.HttpStatus;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import lombok.Getter;
+
+@Getter
 public class ApiError {
 
     private HttpStatus status;
@@ -15,26 +17,22 @@ public class ApiError {
     private String message;
     private String debugMessage;
 
-    private ApiError() {
-        timestamp = LocalDateTime.now();
-    }
-
     ApiError(HttpStatus status) {
-        this();
-        this.status = status;
+        this(status, null);
     }
 
     ApiError(HttpStatus status, Throwable ex) {
-        this();
-        this.status = status;
-        this.message = "Unexpected error";
-        this.debugMessage = ex.getLocalizedMessage();
+        this(status, "Unexpected error", ex);
     }
 
     ApiError(HttpStatus status, String message, Throwable ex) {
-        this();
+        this(status, message, ex, LocalDateTime.now());
+    }
+
+    private ApiError(HttpStatus status, String message, Throwable ex, LocalDateTime timestamp) {
         this.status = status;
         this.message = message;
-        this.debugMessage = ex.getLocalizedMessage();
+        this.debugMessage = null != ex ? ex.getLocalizedMessage() : "No exception captured";
     }
+
 }
