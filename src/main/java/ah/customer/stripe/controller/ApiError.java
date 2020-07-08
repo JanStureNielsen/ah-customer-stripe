@@ -2,6 +2,8 @@ package ah.customer.stripe.controller;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotNull;
+
 import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -11,11 +13,11 @@ import lombok.Getter;
 @Getter
 public class ApiError {
 
-    private HttpStatus status;
+	private @NotNull HttpStatus status;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-    private LocalDateTime timestamp;
-    private String message;
-    private String debugMessage;
+    private @NotNull LocalDateTime timestamp;
+    private @NotNull String message;
+    private @NotNull String debugMessage;
 
     ApiError(HttpStatus status) {
         this(status, null);
