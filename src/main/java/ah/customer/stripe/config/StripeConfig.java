@@ -1,4 +1,4 @@
-package com.fem.adhoc.config;
+package ah.customer.stripe.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

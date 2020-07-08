@@ -1,4 +1,4 @@
-package com.fem.adhoc.controller;
+package ah.customer.stripe.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fem.adhoc.config.StripeConfig;
-import com.fem.adhoc.util.StripeHelper;
 import com.stripe.Stripe;
 import com.stripe.model.Customer;
 import com.stripe.net.StripeResponse;
 
+import ah.customer.stripe.config.StripeConfig;
+import ah.customer.stripe.util.StripeHelper;
 import lombok.extern.slf4j.Slf4j;
 
 //@Api(value = "", description = "Interfaces to the Stripe.com system.")

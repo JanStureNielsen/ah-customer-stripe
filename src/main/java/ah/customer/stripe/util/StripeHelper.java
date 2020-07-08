@@ -1,4 +1,4 @@
-package com.fem.adhoc.util;
+package ah.customer.stripe.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
