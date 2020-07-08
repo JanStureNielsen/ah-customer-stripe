@@ -1,12 +1,12 @@
 # Ad Hoc Markets 
 
 ### Overview
-The input for all the REST calls in the Stripe Customer Object in json form.  As described at https://stripe.com/docs/api/customers
+The input for all the REST calls in the Stripe Customer Object in JSON form.  As described at https://stripe.com/docs/api/customers
 
 ### Stack
-* Spring Boot/Rest
+* Spring Boot REST
 * Spring Boot (see src/main/java/ah/customer/stripe/Application.java)
-* Spring Rest (see src/main/java/com/fem/adhoc/controller/StripeController.java)
+* Spring Rest (see src/main/java/ah/customer/stripe/controller/StripeController.java)
 * Lombok
 
 ### Build & Run Jar
@@ -27,12 +27,14 @@ the 'metadata' attribute. I lost a few hours attempting to understand this.
 ### curl examples:
  
 #### Get Customer
+Requires authentication.
 
 ```
 curl http://localhost:8080/api/customer/<ID> -X GET 
 ```
 
 #### Create Customer
+Starts as anonymous, then creates a customer with a password.
 
 ```
 curl http://localhost:8080/api/customer \
@@ -42,6 +44,7 @@ curl http://localhost:8080/api/customer \
 ```
 
 #### Update Customer
+Requires authentication. This should be a non-destructive update.
 
 ```
 curl http://localhost:8080/api/customer \
@@ -51,8 +54,8 @@ curl http://localhost:8080/api/customer \
 ```
 
 #### Delete Customer
+Requires admin authentication.
 
 ```
 curl http://localhost:8080/api/customer/<ID> -X DELETE 
 ```
-  
