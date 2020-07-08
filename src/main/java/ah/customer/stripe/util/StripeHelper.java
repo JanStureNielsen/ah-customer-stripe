@@ -6,8 +6,10 @@ import com.google.gson.GsonBuilder;
 import java.util.Map;
 
 public class StripeHelper {
+	private StripeHelper() {
+	}
 
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @SuppressWarnings("unchecked")
 	public static <T> Map<String, Object> objectToMap(T entity) {
