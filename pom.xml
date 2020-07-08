@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>ah</groupId>
-    <artifactId>ah-registration-stripe</artifactId>
+    <artifactId>ah-customer-stripe</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Ad Hoc Markets Registration for Stripe</name>
-    <description>String registration gateway for Flexemarkets</description>
+    <name>Customer gateway for Stripe</name>
+    <description>Flexemarkets customer gateway for Stripe</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
