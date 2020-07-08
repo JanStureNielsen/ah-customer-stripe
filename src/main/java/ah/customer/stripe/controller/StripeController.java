@@ -2,7 +2,6 @@ package ah.customer.stripe.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -115,13 +114,4 @@ public class StripeController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    // Example of a convenience method and functional programming.
-    private <T> ResponseEntity<T> runAndReturn(Supplier<T> supplier, String msg) {
-        try {
-            return ResponseEntity.ok().body(supplier.get());
-        } catch (Exception e) {
-            log.error("Error:", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
 }
