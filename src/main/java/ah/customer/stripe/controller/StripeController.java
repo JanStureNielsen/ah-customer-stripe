@@ -1,27 +1,32 @@
-package com.fem.adhoc.controller;
-
-import com.fem.adhoc.config.StripeConfig;
-import com.fem.adhoc.util.StripeHelper;
-import com.stripe.Stripe;
-import com.stripe.model.Customer;
-import com.stripe.net.StripeResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+package ah.customer.stripe.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.stripe.Stripe;
+import com.stripe.model.Customer;
+import com.stripe.net.StripeResponse;
+
+import ah.customer.stripe.config.StripeConfig;
+import ah.customer.stripe.util.StripeHelper;
+import lombok.extern.slf4j.Slf4j;
 
 //@Api(value = "", description = "Interfaces to the Stripe.com system.")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api") @Slf4j
 public class StripeController {
-    final Logger logger = LoggerFactory.getLogger(StripeController.class);
-
     @Autowired
     public StripeController(StripeConfig config) {
         Stripe.apiKey = config.stripeSecretKey();
@@ -32,7 +37,7 @@ public class StripeController {
         try {
             return ResponseEntity.ok().body("OK");
         } catch (Exception e) {
-            logger.error("Error:", e);
+            log.error("Error:", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -43,7 +48,7 @@ public class StripeController {
             final Customer customer = Customer.retrieve(customerCid);
             return returnStripeResponseCustomer(customer, "Error fetching Customer");
         } catch (Exception e) {
-            logger.error("Error Fetching Customer.", e);
+            log.error("Error Fetching Customer.", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -55,7 +60,7 @@ public class StripeController {
             final Customer deletedCustomer = customer.delete();
             return returnStripeResponseCustomer(deletedCustomer, "Error Removing Customer.");
         } catch (Exception e) {
-            logger.error("Error Removing Customer.", e);
+            log.error("Error Removing Customer.", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -67,7 +72,7 @@ public class StripeController {
             final Customer customerNew = Customer.create(customerMap);
             return returnStripeResponseCustomer(customerNew, "Error Creating Customer");
         } catch (Exception e) {
-            logger.error("Error Creating Customer.", e);
+            log.error("Error Creating Customer.", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -92,7 +97,7 @@ public class StripeController {
 
             return returnStripeResponseCustomer(updatedCustomer, "Error Updating Customer");
         } catch (Exception e) {
-            logger.error("Error Creating Customer.", e);
+            log.error("Error Creating Customer.", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -103,19 +108,10 @@ public class StripeController {
             final Customer fetchedCustomer = StripeHelper.jsonToObject(lastResponse.body(), Customer.class);
             return ResponseEntity.ok().body(fetchedCustomer);
         }
-        logger.error(String.format("%s (alsk) : Code %d \n%s", lastResponse.code(),
+        log.error(String.format("%s (alsk) : Code %d \n%s", lastResponse.code(),
                 StripeHelper.objectToJson(customer)));
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    // Example of a convenience method and functional programming.
-    private <T> ResponseEntity<T> runAndReturn(Supplier<T> supplier, String msg) {
-        try {
-            return ResponseEntity.ok().body(supplier.get());
-        } catch (Exception e) {
-            logger.error("Error:", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
 }

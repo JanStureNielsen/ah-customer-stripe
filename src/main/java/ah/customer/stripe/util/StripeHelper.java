@@ -1,4 +1,4 @@
-package com.fem.adhoc.util;
+package ah.customer.stripe.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,7 +9,8 @@ public class StripeHelper {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public static <T> Map<String, Object> objectToMap(T entity) {
+    @SuppressWarnings("unchecked")
+	public static <T> Map<String, Object> objectToMap(T entity) {
         final String jsonStr = gson.toJson(entity);
         return gson.fromJson(jsonStr, Map.class);
     }

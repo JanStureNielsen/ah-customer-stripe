@@ -1,12 +1,10 @@
-package com.fem.adhoc;
+package ah.customer.stripe;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class StripeApplication {
+public class Application {
 
     public static final String CSV_FILE_PATH_PREFIX = "src/main/resources/";
 
@@ -29,7 +27,7 @@ public class StripeApplication {
     //    private CsvMapper csvMapper = new CsvMapper();
 
     public static void main(String[] args) {
-        SpringApplication.run(StripeApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
 

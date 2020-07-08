@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.example</groupId>
-    <artifactId>adhocmarkets-stripe</artifactId>
+    <groupId>ah</groupId>
+    <artifactId>ah-customer-stripe</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>wcf</name>
-    <description>Ad Hoc Markets-Stripe</description>
+    <name>Customer gateway for Stripe</name>
+    <description>Flexemarkets customer gateway for Stripe</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -17,35 +17,24 @@
 
     <properties>
         <assertj.core.version>3.16.1</assertj.core.version>
-        <java.version>11</java.version>
         <lombok.version>1.18.12</lombok.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
         <myspring.framework.version>2.3.1.RELEASE</myspring.framework.version>
         <springdoc.version>1.4.3</springdoc.version>
         <stripe.version>19.27.0</stripe.version>
         <swagger.core.version>2.1.3</swagger.core.version>
 
-        <start-class>com.fem.adhoc.StripeApplication</start-class>
+        <start-class>ah.customer.stripe.Application</start-class>
     </properties>
 
     <dependencies>
-        <!--
-         | For Maven, add the following dependency to your POM and replace {VERSION} with the
-         | version number you want to use from
-         | - https://mvnrepository.com/artifact/com.stripe/stripe-java or
-         | - https://github.com/stripe/stripe-java/releases/latest
-         +-->
         <dependency>
             <groupId>com.stripe</groupId>
             <artifactId>stripe-java</artifactId>
             <version>${stripe.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.6</version>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -55,17 +44,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-rest</artifactId>
-            <version>${myspring.framework.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${myspring.framework.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
             <optional>true</optional>
         </dependency>
     </dependencies>

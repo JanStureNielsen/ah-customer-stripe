@@ -1,4 +1,4 @@
-package com.fem.adhoc.helper;
+package ah.customer.stripe.helper;
 
 import lombok.Getter;
 
@@ -30,6 +30,6 @@ public class MergeHelper {
     }
 
     public static String coalesce(String s1, String s2) {
-        return s1 != null && !s1.isBlank() ? s1 : s2;
+        return s1 != null && !s1.trim().isEmpty() ? s1 : s2;
     }
 }
