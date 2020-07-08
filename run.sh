@@ -1,4 +1,4 @@
 
-rm -f ./target/adhocmarkets-stripe-0.0.1-SNAPSHOT.jar
+rm -f ./target/*.jar
 mvn clean package spring-boot:repackage
-java -jar ./target/adhocmarkets-stripe-0.0.1-SNAPSHOT.jar
+java -jar ./target/*.jar
