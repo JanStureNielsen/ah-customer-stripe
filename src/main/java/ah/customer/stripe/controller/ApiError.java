@@ -13,7 +13,7 @@ import lombok.Getter;
 @Getter
 public class ApiError {
 
-	private @NotNull HttpStatus status;
+    private @NotNull HttpStatus status;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private @NotNull LocalDateTime timestamp;
     private @NotNull String message;
