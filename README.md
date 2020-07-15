@@ -30,14 +30,14 @@ the 'metadata' attribute. I lost a few hours attempting to understand this.
 Requires authentication.
 
 ```
-curl http://localhost:8080/api/customer/<ID> -X GET 
+curl http://localhost:8080/api/v1/customer/<ID> -X GET 
 ```
 
 #### Create Customer
 Starts as anonymous, then creates a customer with a password.
 
 ```
-curl http://localhost:8080/api/customer \
+curl http://localhost:8080/api/v1/customer \
   -X POST \
   -H "Content-Type: application/json" \
   -d '{ "description": "My Forth Test Customer" }'   
@@ -47,7 +47,7 @@ curl http://localhost:8080/api/customer \
 Requires authentication. This should be a non-destructive update.
 
 ```
-curl http://localhost:8080/api/customer \
+curl http://localhost:8080/api/v1/customer \
   -X PUT \
   -H "Content-Type: application/json" \
   -d '{ "id": "'${CID}'", "description": "(2)My Updated Forth Test Customer", "email" : "bob.bigboy_002@food.me" }'   
@@ -57,5 +57,5 @@ curl http://localhost:8080/api/customer \
 Requires admin authentication.
 
 ```
-curl http://localhost:8080/api/customer/<ID> -X DELETE 
+curl http://localhost:8080/api/v1/customer/<ID> -X DELETE 
 ```
