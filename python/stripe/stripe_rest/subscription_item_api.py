@@ -1,9 +1,9 @@
 import stripe
 import requests
 import json
-from stripe_rest import ah_debug
+from stripe_rest import ah_debug, ah_constant
 
-baseurl = "http://localhost:8080/api/v1"
+baseurl = ah_constant.baseurl()
 
 def create_subscription_item(params):
     response = requests.post(baseurl + "/subscription_item", params)
@@ -11,7 +11,7 @@ def create_subscription_item(params):
 
     subscription_item_response = json.loads(response.content)
     if subscription_item_response['status'] != 200:
-        ah_debug.raise_error(subscription_item_response, "Create Subscription Item return bad Http Status")
+        ah_debug.raise_error(subscription_item_response, "Create Subscription Item : Returned Bad Http Status")
     return subscription_item_response['entity']
 
 def get_subscription_item(subscription_item_cid):
@@ -20,7 +20,7 @@ def get_subscription_item(subscription_item_cid):
     subscription_item_response = json.loads(response.content)
 
     if subscription_item_response['status'] != 200:
-        ah_debug.raise_error(subscription_item_response, "Get Subscription Item return bad Http Status")
+        ah_debug.raise_error(subscription_item_response, "Get Subscription Item : Returned Bad Http Status")
     return subscription_item_response['entity']
 
 def delete_subscription_item(subscription_item_cid):
@@ -32,7 +32,7 @@ def delete_subscription_item(subscription_item_cid):
     delete_response = json.loads(response.content)
 
     if delete_response['status'] != 200:
-        ah_debug.raise_error(delete_response, "Delete Subscription Item return bad Http Status")
+        ah_debug.raise_error(delete_response, "Delete Subscription Item : Returned Bad Http Status")
     return delete_response['entity']
 
 def list_subscription_items(subscription_cid):
@@ -41,7 +41,7 @@ def list_subscription_items(subscription_cid):
     subscription_items_response = json.loads(response.content)
 
     if subscription_items_response['status'] != 200:
-        ah_debug.raise_error(subscription_items_response, "List Subscription Item return bad Http Status")
+        ah_debug.raise_error(subscription_items_response, "List Subscription Item : Returned Bad Http Status")
     return subscription_items_response['entities']
 
 def list_subscription_items_and_delete(subscription_cid):

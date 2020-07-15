@@ -1,9 +1,9 @@
 import stripe
 import requests
 import json
-from stripe_rest import ah_debug
+from stripe_rest import ah_debug, ah_constant
 
-baseurl = "http://localhost:8080/api/v1"
+baseurl = ah_constant.baseurl()
 
 def create_subscription(params):
     response = requests.post(baseurl + "/subscription", params)
@@ -11,7 +11,7 @@ def create_subscription(params):
 
     subscription_response = json.loads(response.content)
     if subscription_response['status'] != 200:
-        ah_debug.raise_error(subscription_response, "Create Subscription return bad Http Status")
+        ah_debug.raise_error(subscription_response, "Create Subscription : Returned Bad Http Status")
     return subscription_response['entity']
 
 def get_subscription(subscription_cid):
@@ -20,7 +20,7 @@ def get_subscription(subscription_cid):
     subscription_response = json.loads(response.content)
 
     if subscription_response['status'] != 200:
-        ah_debug.raise_error(subscription_response, "Get Subscription return bad Http Status")
+        ah_debug.raise_error(subscription_response, "Get Subscription : Returned Bad Http Status")
     return subscription_response['entity']
 
 def delete_subscription(subscription_cid):
@@ -32,7 +32,7 @@ def delete_subscription(subscription_cid):
     delete_response = json.loads(response.content)
 
     if delete_response['status'] != 200:
-        ah_debug.raise_error(delete_response, "Delete Subscription return bad Http Status")
+        ah_debug.raise_error(delete_response, "Delete Subscription : Returned Bad Http Status")
     return delete_response['entity']
 
 
@@ -42,7 +42,7 @@ def list_subscriptions():
     subscriptions_response = json.loads(response.content)
 
     if subscriptions_response['status'] != 200:
-        ah_debug.raise_error(subscriptions_response, "List Subscription return bad Http Status")
+        ah_debug.raise_error(subscriptions_response, "List Subscription : Returned Bad Http Status")
     return subscriptions_response['entities']
 
 def list_subscriptions_and_delete():

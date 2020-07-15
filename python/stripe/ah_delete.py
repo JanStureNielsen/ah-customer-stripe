@@ -1,6 +1,10 @@
 from stripe_rest import customer_api, product_api, price_api, subscription_api, subscription_item_api, subscription_schedule_api
-import json
+from stripe_rest import payment_card_api
 
+
+customers = customer_api.list_customers()
+for customer in customers:
+    payment_card_api.list_payment_cards_and_delete(customer['id'])
 
 subscriptions = subscription_api.list_subscriptions()
 

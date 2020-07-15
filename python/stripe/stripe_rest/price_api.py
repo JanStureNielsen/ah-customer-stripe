@@ -1,9 +1,9 @@
 import stripe
 import requests
 import json
-from stripe_rest import ah_debug
+from stripe_rest import ah_debug, ah_constant
 
-baseurl = "http://localhost:8080/api/v1"
+baseurl = ah_constant.baseurl()
 
 def create_price(params):
     response = requests.post(baseurl + "/price", params)
@@ -11,7 +11,7 @@ def create_price(params):
     price_response = json.loads(response.content)
 
     if price_response['status'] != 200:
-        ah_debug.raise_error(price_response, "Create Price return bad Http Status")
+        ah_debug.raise_error(price_response, "Create Price : Returned Bad Http Status")
     return price_response['entity']
 
 def get_price(price_cid):
@@ -20,7 +20,7 @@ def get_price(price_cid):
     price_response = json.loads(response.content)
 
     if price_response['status'] != 200:
-        ah_debug.raise_error(price_response, "Get Price return bad Http Status")
+        ah_debug.raise_error(price_response, "Get Price : Returned Bad Http Status")
     return price_response['entity']
 
 def delete_price(price_cid):
@@ -29,7 +29,7 @@ def delete_price(price_cid):
     delete_response = json.loads(response.content)
 
     if delete_response['status'] != 200:
-        ah_debug.raise_error(delete_response, "Delete Price return bad Http Status")
+        ah_debug.raise_error(delete_response, "Delete Price : Returned Bad Http Status")
     return delete_response['entity']
 
 def list_prices():
@@ -38,7 +38,7 @@ def list_prices():
     prices_response = json.loads(response.content)
 
     if prices_response['status'] != 200:
-        ah_debug.raise_error(prices_response, "List Prices return bad Http Status")
+        ah_debug.raise_error(prices_response, "List Prices : Returned Bad Http Status")
     return prices_response['entities']
 
 def list_prices_and_delete():

@@ -1,9 +1,9 @@
 import stripe
 import requests
 import json
-from stripe_rest import ah_debug
+from stripe_rest import ah_debug, ah_constant
 
-baseurl = "http://localhost:8080/api/v1"
+baseurl = ah_constant.baseurl()
 
 def create_customer(params):
     response = requests.post(baseurl + "/customer", params)
@@ -11,7 +11,7 @@ def create_customer(params):
     customer_response = json.loads(response.content)
 
     if customer_response['status'] != 200:
-        ah_debug.raise_error(customer_response, "Create Customer return bad Http Status")
+        ah_debug.raise_error(customer_response, "Create Customer : Returned Bad Http Status")
     return customer_response['entity']
 
 def get_customer(custId):
@@ -20,7 +20,7 @@ def get_customer(custId):
     customer_response = json.loads(response.content)
 
     if customer_response['status'] != 200:
-        ah_debug.raise_error(customer_response, "Get Customer return bad Http Status")
+        ah_debug.raise_error(customer_response, "Get Customer : Returned Bad Http Status")
     return customer_response['entity']
 
 def delete_customer(customerCid):
@@ -29,7 +29,7 @@ def delete_customer(customerCid):
 
     delete_response = json.loads(response.content)
     if delete_response['status'] != 200:
-        ah_debug.raise_error(delete_response, "Delete Customer return bad Http Status")
+        ah_debug.raise_error(delete_response, "Delete Customer : Returned Bad Http Status")
     return delete_response['entity']
 
 def list_customers():
@@ -38,7 +38,7 @@ def list_customers():
 
     list_response = json.loads(response.content)
     if list_response['status'] != 200:
-        ah_debug.raise_error(list_response, "List Customers return bad Http Status")
+        ah_debug.raise_error(list_response, "List Customers : Returned Bad Http Status")
     return list_response['entities']
 
 def list_customers_and_delete():

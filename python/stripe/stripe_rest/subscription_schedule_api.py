@@ -1,9 +1,9 @@
 import stripe
 import requests
 import json
-from stripe_rest import ah_debug
+from stripe_rest import ah_debug, ah_constant
 
-baseurl = "http://localhost:8080/api/v1"
+baseurl = ah_constant.baseurl()
 
 def create_subscription_schedule(params):
     response = requests.post(baseurl + "/subscription_schedule", params)
@@ -11,7 +11,7 @@ def create_subscription_schedule(params):
 
     subscription_schedule_response = json.loads(response.content)
     if subscription_schedule_response['status'] != 200:
-        ah_debug.raise_error(subscription_schedule_response, "Create Subscription Schedule return bad Http Status")
+        ah_debug.raise_error(subscription_schedule_response, "Create Subscription Schedule : Returned Bad Http Status")
     return subscription_schedule_response['entity']
 
 def get_subscription_schedule(subscription_schedule_cid):
@@ -20,7 +20,7 @@ def get_subscription_schedule(subscription_schedule_cid):
     subscription_schedule_response = json.loads(response.content)
 
     if subscription_schedule_response['status'] != 200:
-        ah_debug.raise_error(subscription_schedule_response, "Get Subscription Schedule return bad Http Status")
+        ah_debug.raise_error(subscription_schedule_response, "Get Subscription Schedule : Returned Bad Http Status")
     return subscription_schedule_response['entity']
 
 def delete_subscription_schedule(subscription_schedule_cid):
@@ -32,7 +32,7 @@ def delete_subscription_schedule(subscription_schedule_cid):
     delete_response = json.loads(response.content)
 
     if delete_response['status'] != 200:
-        ah_debug.raise_error(delete_response, "Delete Subscription Schedule return bad Http Status")
+        ah_debug.raise_error(delete_response, "Delete Subscription Schedule : Returned Bad Http Status")
     return delete_response['entity']
 
 def list_subscription_schedules(subscription_cid):
@@ -41,7 +41,7 @@ def list_subscription_schedules(subscription_cid):
     subscription_schedules_response = json.loads(response.content)
 
     if subscription_schedules_response['status'] != 200:
-        ah_debug.raise_error(subscription_schedules_response, "List Subscription Schedule return bad Http Status")
+        ah_debug.raise_error(subscription_schedules_response, "List Subscription Schedule : Returned Bad Http Status")
     return subscription_schedules_response['entities']
 
 def list_subscription_schedules_and_delete(subscription_cid):

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ah.helper.AhConstant.STRIPE_REST_LARGE_LIMIT;
 import static ah.helper.StripeRequestHelper.ahResponseError;
 
 @RestController
@@ -31,6 +32,27 @@ public class StripeControllerPaymentCard {
     @Autowired
     public StripeControllerPaymentCard(StripeConfig config) {
         Stripe.apiKey = config.stripeSecretKey();
+    }
+
+    @PostMapping("/paymentCard/{customerCid}")
+    public ResponseEntity<AhResponse<Card>> createCard(
+            @PathVariable("customerCid") String customerCid, @RequestBody String paymentSourceCollectionCreateParamsString) {
+        try {
+            final PaymentSourceCollectionCreateParams paymentCardCreateParams =
+                    StripeHelper.getGson().fromJson(paymentSourceCollectionCreateParamsString, PaymentSourceCollectionCreateParams.class);
+            final Customer customer = Customer.retrieve(customerCid);
+
+            final Card paymentCardNew = (Card) customer.getSources().create(paymentCardCreateParams);
+            return buildStripeResponseCard(paymentCardNew, "Error Creating Card");
+        } catch (Exception e) {
+            log.error("Error Creating Card.", e);
+            return AhResponse.internalError(e);
+        }
+    }
+
+    @GetMapping("/paymentCards/all/{customerCid}")
+    public ResponseEntity<AhResponse<Card>> getAllCardsForCustomer(@PathVariable("customerCid") String customerCid) {
+        return getCardsForCustomer(customerCid, STRIPE_REST_LARGE_LIMIT);
     }
 
     @GetMapping("/paymentCards/{customerCid}")
@@ -66,22 +88,6 @@ public class StripeControllerPaymentCard {
             return buildStripeResponseCard(paymentCard, "Error fetching Card");
         } catch (Exception e) {
             log.error("Error Fetching Card.", e);
-            return AhResponse.internalError(e);
-        }
-    }
-
-    @PostMapping("/paymentCard")
-    public ResponseEntity<AhResponse<Card>> createCard(
-            @PathVariable("customerCid") String customerCid, @RequestBody String paymentSourceCollectionCreateParamsString) {
-        try {
-            final PaymentSourceCollectionCreateParams paymentCardCreateParams =
-                    StripeHelper.getGson().fromJson(paymentSourceCollectionCreateParamsString, PaymentSourceCollectionCreateParams.class);
-            final Customer customer = Customer.retrieve(customerCid);
-
-            final Card paymentCardNew = (Card) customer.getSources().create(paymentCardCreateParams);
-            return buildStripeResponseCard(paymentCardNew, "Error Creating Card");
-        } catch (Exception e) {
-            log.error("Error Creating Card.", e);
             return AhResponse.internalError(e);
         }
     }
@@ -124,8 +130,13 @@ public class StripeControllerPaymentCard {
     private ResponseEntity<AhResponse<Card>> buildStripeResponseCard(Card paymentCard, String msg) {
         final StripeResponse lastResponse = paymentCard.getLastResponse();
         if (lastResponse.code() == HttpStatus.OK.value()) {
-            final Card fetchedCard = StripeHelper.jsonToObject(lastResponse.body(), Card.class);
-            return AhResponse.buildOk(fetchedCard);
+            try {
+                final Card fetchedCard = StripeHelper.jsonToObject(lastResponse.body(), Card.class);
+                return AhResponse.buildOk(fetchedCard);
+            } catch (Exception e) {
+                paymentCard.setLastResponse(null);
+                return AhResponse.buildOk(paymentCard);
+            }
         }
         return ahResponseError(msg, lastResponse.code(), paymentCard);
     }

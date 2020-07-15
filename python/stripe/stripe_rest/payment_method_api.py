@@ -1,9 +1,9 @@
 import stripe
 import requests
 import json
-from stripe_rest import ah_debug
+from stripe_rest import ah_debug, ah_constant
 
-baseurl = "http://localhost:8080/api/v1"
+baseurl = ah_constant.baseurl()
 
 def create_payment_method(params):
     response = requests.post(baseurl + "/paymentMethod", params)
@@ -11,7 +11,7 @@ def create_payment_method(params):
     payment_method_response = json.loads(response.content)
 
     if payment_method_response['status'] != 200:
-        ah_debug.raise_error(payment_method_response, "Create Payment Method return bad Http Status")
+        ah_debug.raise_error(payment_method_response, "Create Payment Method : Returned Bad Http Status")
     return payment_method_response['entity']
 
 def get_payment_method(custId):
@@ -20,7 +20,7 @@ def get_payment_method(custId):
     payment_method_response = json.loads(response.content)
 
     if payment_method_response['status'] != 200:
-        ah_debug.raise_error(payment_method_response, "Get Payment Method return bad Http Status")
+        ah_debug.raise_error(payment_method_response, "Get Payment Method : Returned Bad Http Status")
     return payment_method_response['entity']
 
 def detach_payment_method_from_customer(payment_methodCid):
@@ -29,7 +29,7 @@ def detach_payment_method_from_customer(payment_methodCid):
 
     delete_response = json.loads(response.content)
     if delete_response['status'] != 200:
-        ah_debug.raise_error(delete_response, "Delete Payment Method return bad Http Status")
+        ah_debug.raise_error(delete_response, "Delete Payment Method : Returned Bad Http Status")
     return delete_response['entity']
 
 def attach_payment_method_to_customer(payment_methodCid):
@@ -38,7 +38,7 @@ def attach_payment_method_to_customer(payment_methodCid):
 
     delete_response = json.loads(response.content)
     if delete_response['status'] != 200:
-        ah_debug.raise_error(delete_response, "Delete Payment Method return bad Http Status")
+        ah_debug.raise_error(delete_response, "Delete Payment Method : Returned Bad Http Status")
     return delete_response['entity']
 
 def list_payment_methods():
@@ -47,7 +47,7 @@ def list_payment_methods():
 
     list_response = json.loads(response.content)
     if list_response['status'] != 200:
-        ah_debug.raise_error(list_response, "List Payment Methods return bad Http Status")
+        ah_debug.raise_error(list_response, "List Payment Methods : Returned Bad Http Status")
     return list_response['entities']
 
 def list_payment_methods_and_delete():

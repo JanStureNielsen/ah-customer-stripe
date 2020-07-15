@@ -1,9 +1,9 @@
 import stripe
 import requests
 import json
-from stripe_rest import ah_debug
+from stripe_rest import ah_debug, ah_constant
 
-baseurl = "http://localhost:8080/api/v1"
+baseurl = ah_constant.baseurl()
 
 def create_product(params):
     response = requests.post(baseurl + "/product", params)
@@ -11,7 +11,7 @@ def create_product(params):
     product_response = json.loads(response.content)
 
     if product_response['status'] != 200:
-        ah_debug.raise_error(product_response, "Create Product return bad Http Status")
+        ah_debug.raise_error(product_response, "Create Product : Returned Bad Http Status")
     return product_response['entity']
 
 def get_product(product_cid):
@@ -20,7 +20,7 @@ def get_product(product_cid):
     product_response = json.loads(response.content)
 
     if product_response['status'] != 200:
-        ah_debug.raise_error(product_response, "Get Product return bad Http Status")
+        ah_debug.raise_error(product_response, "Get Product : Returned Bad Http Status")
     return product_response['entity']
 
 def delete_product(product_cid):
@@ -30,7 +30,7 @@ def delete_product(product_cid):
     delete_response = json.loads(response.content)
     # 409 == CONFLICT: Product can't be deleted because it has an attached Price.
     if delete_response['status'] != 200 and delete_response['status'] != 409:
-        ah_debug.raise_error(delete_response, "Delete Product return bad Http Status")
+        ah_debug.raise_error(delete_response, "Delete Product : Returned Bad Http Status")
     return delete_response['entity']
 
 def list_products():
@@ -39,7 +39,7 @@ def list_products():
     products_response= json.loads(response.content)
 
     if products_response['status'] != 200:
-        raise Exception("List Products return bad Http Status of '{}'".format(products_response['status']))
+        raise Exception("List Products : Returned Bad Http Status of '{}'".format(products_response['status']))
     return products_response['entities']
 
 def list_products_and_delete():

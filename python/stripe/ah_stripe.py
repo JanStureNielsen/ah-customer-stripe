@@ -1,4 +1,5 @@
 from stripe_rest import customer_api, product_api, price_api, subscription_api, subscription_item_api, subscription_schedule_api
+from stripe_rest import payment_method_api, payment_card_api
 import json
 import sys
 
@@ -6,7 +7,6 @@ import sys
 # Create a Customer
 # Create a Product
 # Create a Price, add it to the product
-# Create a Plan
 # Create a SubscriptionItem
 # Create a SubscriptionSchedule
 # ##############################################################################
@@ -36,6 +36,52 @@ for cust_dict in customers:
         break
 
 assert found, "Could not find matching customer for customer id {}".format(cust_cid)
+
+
+# ##########################################################
+# Create PaymentCard
+# Get same PaymentCard
+# List all PaymentCards .. find our paymentCard
+#
+paymentCard = payment_card_api.create_payment_card(cust_cid, '''
+{ "object": "card", 
+  "brand": "Visa", 
+  "source": "tok_visa", 
+  "country": "US", 
+  "customer":"''' + cust_cid + '''", 
+  "exp_month": 8, 
+  "exp_year": 2022, 
+  "funding":"credit", 
+  "last4": "4242" 
+}
+''')
+assert paymentCard is not None, "Create PaymentCard returned None for Price."
+
+card_cid = paymentCard['id']
+assert card_cid.startswith("card_"), "Create PaymentCard returned unexpected paymentCard id {}".format(card_cid)
+
+payment_card_2 = payment_card_api.get_payment_card(cust_cid, card_cid)
+print("PaymentCard Id : " + str(payment_card_2['id']))
+card_cid_2 =  payment_card_2['id']
+assert card_cid == card_cid_2, "PaymentCard Ids do not match : {} / {}".format(card_cid, card_cid_2)
+
+paymentCards = payment_card_api.list_payment_cards(cust_cid)
+found = False
+for paymentCard3 in paymentCards:
+    cid = paymentCard3['id']
+    if card_cid == cid:
+        found = True
+        break
+
+assert found, "Could not find matching paymentCard for paymentCard id {}".format(card_cid)
+
+
+
+sys.exit(0)
+
+
+
+
 
 # ##########################################################
 # Create Product

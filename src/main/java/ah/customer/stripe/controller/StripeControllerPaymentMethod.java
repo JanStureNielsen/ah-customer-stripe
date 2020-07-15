@@ -90,7 +90,6 @@ public class StripeControllerPaymentMethod {
     // Not really delete, this detaches the payment method from a customer.
     @DeleteMapping("/paymentMethod/detach/{id}")
     public ResponseEntity<AhResponse<PaymentMethod>> detachPaymentMethodFromCustomer(@PathVariable("id") String paymentMethodCid) {
-        //Eric::
         try {
             final PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentMethodCid);
             final PaymentMethod deletedPaymentMethod = paymentMethod.detach();
