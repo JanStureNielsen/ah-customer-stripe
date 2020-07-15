@@ -39,49 +39,116 @@ assert found, "Could not find matching customer for customer id {}".format(cust_
 
 
 # ##########################################################
-# Create PaymentCard
-# Get same PaymentCard
-# List all PaymentCards .. find our paymentCard
+# Create PaymentMethod
+# Get same PaymentMethod
+# List all PaymentMethods .. find our paymentMethod
 #
-paymentCard = payment_card_api.create_payment_card(cust_cid, '''
-{ "object": "card", 
-  "brand": "Visa", 
-  "source": "tok_visa", 
-  "country": "US", 
-  "customer":"''' + cust_cid + '''", 
-  "exp_month": 8, 
-  "exp_year": 2022, 
-  "funding":"credit", 
-  "last4": "4242" 
+paymentMethod = payment_method_api.create_payment_method('''
+{ "object": "payment_method", 
+  "type":"card",
+  "card": { 
+      "exp_month": "8", 
+      "exp_year": "2022", 
+      "number": "4242424242424242",
+      "cvc": "123"
+    },
+   "billing_details": {
+    "address": {
+      "city": "Palo Alto",
+      "country": "US",
+      "line1": "123 Main St",
+      "postal_code": "94306",
+      "state": "CA"
+    },
+    "email": "hungry4pizza@food.com",
+    "name": "Fred Smith",
+    "phone": "435-555-1234"
+  } 
 }
 ''')
-assert paymentCard is not None, "Create PaymentCard returned None for Price."
+assert paymentMethod is not None, "Create PaymentMethod returned None."
 
-card_cid = paymentCard['id']
-assert card_cid.startswith("card_"), "Create PaymentCard returned unexpected paymentCard id {}".format(card_cid)
+payment_method_cid = paymentMethod['id']
+assert payment_method_cid.startswith("pm_"), "Create PaymentMethod returned unexpected paymentMethod id {}".format(payment_method_cid)
 
-payment_card_2 = payment_card_api.get_payment_card(cust_cid, card_cid)
-print("PaymentCard Id : " + str(payment_card_2['id']))
-card_cid_2 =  payment_card_2['id']
-assert card_cid == card_cid_2, "PaymentCard Ids do not match : {} / {}".format(card_cid, card_cid_2)
+# Attach to customer
+json_attach_params = '{ "customer": "' + cust_cid + '" }'
+attached_payment_method = payment_method_api.attach_payment_method_to_customer(payment_method_cid, json_attach_params)
+attached_payment_method_cid = attached_payment_method['id']
+assert payment_method_cid == attached_payment_method_cid, "PaymentMethod Id does not match attached : {} / {}".format(payment_method_cid, attached_payment_method_cid)
 
-paymentCards = payment_card_api.list_payment_cards(cust_cid)
+# Fetch the saved Payment Method
+payment_method_2 = payment_method_api.get_payment_method(payment_method_cid)
+print("PaymentMethod Id : " + str(payment_method_2['id']))
+method_cid_2 = payment_method_2['id']
+assert payment_method_cid == method_cid_2, "PaymentMethod Ids do not match : {} / {}".format(payment_method_cid, method_cid_2)
+
+pm_list_json = " { 'customer': '" + cust_cid + "', 'type': 'card', 'limit': 9999999 } "
+paymentMethods = payment_method_api.list_payment_methods(pm_list_json)
 found = False
-for paymentCard3 in paymentCards:
-    cid = paymentCard3['id']
-    if card_cid == cid:
+for paymentMethod3 in paymentMethods:
+    cid = paymentMethod3['id']
+    if payment_method_cid == cid:
         found = True
         break
 
-assert found, "Could not find matching paymentCard for paymentCard id {}".format(card_cid)
+assert found, "Could not find matching paymentMethod for paymentMethod id {}".format(payment_method_cid)
+
+# ##########################################################
+# *** Important ***
+#   Set the Customer default Payment Method to the newly
+#       created Payment Method
+# ##########################################################
+print("====================")
+print("Setting default Payment Method '{}' on Customer '{}'".format(payment_method_cid, cust_cid))
+print("=== ")
+update_json = "{ 'invoice_settings': { 'default_payment_method': '" + payment_method_cid + "' } }"
+customer = customer_api.update_customer(cust_cid, update_json)
+assert customer is not None, "Update Customer Default payment Method returned None."
+
+cust_cid_2 =  customer['id']
+assert cust_cid == cust_cid_2, "Customer Ids do not match for Update : {} / {}".format(cust_cid, cust_cid_2)
 
 
-
-sys.exit(0)
-
-
-
-
+# # ##########################################################
+# # Create PaymentCard
+# # Get same PaymentCard
+# # List all PaymentCards .. find our paymentCard
+# #
+# paymentCard = payment_card_api.create_payment_card(cust_cid, '''
+# { "object": "card",
+#   "brand": "Visa",
+#   "source": "tok_visa",
+#   "country": "US",
+#   "customer":"''' + cust_cid + '''",
+#   "exp_month": 8,
+#   "exp_year": 2022,
+#   "funding":"credit",
+#   "number": "4242424242424242",
+#   "cvc": "123",
+#   "last4": "4242"
+# }
+# ''')
+# assert paymentCard is not None, "Create PaymentCard returned None."
+#
+# card_cid = paymentCard['id']
+# assert card_cid.startswith("card_"), "Create PaymentCard returned unexpected paymentCard id {}".format(card_cid)
+#
+# payment_card_2 = payment_card_api.get_payment_card(cust_cid, card_cid)
+# print("PaymentCard Id : " + str(payment_card_2['id']))
+# card_cid_2 =  payment_card_2['id']
+# assert card_cid == card_cid_2, "PaymentCard Ids do not match : {} / {}".format(card_cid, card_cid_2)
+#
+# paymentCards = payment_card_api.list_payment_cards(cust_cid)
+# found = False
+# for paymentCard3 in paymentCards:
+#     cid = paymentCard3['id']
+#     if card_cid == cid:
+#         found = True
+#         break
+#
+# assert found, "Could not find matching paymentCard for paymentCard id {}".format(card_cid)
+#
 
 # ##########################################################
 # Create Product
@@ -254,13 +321,3 @@ assert found, "Could not find matching subscription_schedule for subscription_sc
 print ("=======================================")
 print ("=======================================")
 print ("=======================================")
-
-# print ("custCid : " + str(custCid))
-
-# price.list_prices_and_delete()
-# product.list_products_and_delete()
-# customer.list_customers_and_delete()
-
-# deleteCustomer()
-
-

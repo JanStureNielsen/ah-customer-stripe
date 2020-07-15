@@ -23,8 +23,17 @@ def get_customer(custId):
         ah_debug.raise_error(customer_response, "Get Customer : Returned Bad Http Status")
     return customer_response['entity']
 
-def delete_customer(customerCid):
-    response = requests.delete(baseurl + "/customer/{}".format(customerCid))
+def update_customer(cust_cid, params):
+    response = requests.request(method = 'put', url = baseurl + "/customer/{}".format(cust_cid), data = params)
+    print("Update Customer : " + str(response))
+
+    update_response = json.loads(response.content)
+    if update_response['status'] != 200:
+        ah_debug.raise_error(update_response, "Update Customer : Returned Bad Http Status")
+    return update_response['entity']
+
+def delete_customer(cust_cid):
+    response = requests.delete(baseurl + "/customer/{}".format(cust_cid))
     print("Delete Customer : " + str(response))
 
     delete_response = json.loads(response.content)

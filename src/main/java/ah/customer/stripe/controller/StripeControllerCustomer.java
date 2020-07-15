@@ -104,8 +104,13 @@ public class StripeControllerCustomer {
     private ResponseEntity<AhResponse<Customer>> buildStripeResponseCustomer(Customer customer, String msg) {
         final StripeResponse lastResponse = customer.getLastResponse();
         if (lastResponse.code() == HttpStatus.OK.value()) {
-            final Customer fetchedCustomer = StripeHelper.jsonToObject(lastResponse.body(), Customer.class);
-            return AhResponse.buildOk(fetchedCustomer);
+            try {
+                final Customer fetchedCustomer = StripeHelper.jsonToObject(lastResponse.body(), Customer.class);
+                return AhResponse.buildOk(fetchedCustomer);
+            } catch (Exception e) {
+                customer.setLastResponse(null);
+                return AhResponse.buildOk(customer);
+            }
         }
         return ahResponseError(msg, lastResponse.code(), customer);
     }

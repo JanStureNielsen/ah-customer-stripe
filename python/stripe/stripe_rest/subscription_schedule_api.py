@@ -7,7 +7,7 @@ baseurl = ah_constant.baseurl()
 
 def create_subscription_schedule(params):
     response = requests.post(baseurl + "/subscription_schedule", params)
-    print("Create SubscriptionSchedule : " + str(response))
+    print("Create Subscription Schedule : " + str(response))
 
     subscription_schedule_response = json.loads(response.content)
     if subscription_schedule_response['status'] != 200:

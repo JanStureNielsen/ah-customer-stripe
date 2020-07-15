@@ -7,7 +7,7 @@ baseurl = ah_constant.baseurl()
 
 def create_subscription_item(params):
     response = requests.post(baseurl + "/subscription_item", params)
-    print("Create SubscriptionItem : " + str(response))
+    print("Create Subscription Item : " + str(response))
 
     subscription_item_response = json.loads(response.content)
     if subscription_item_response['status'] != 200:

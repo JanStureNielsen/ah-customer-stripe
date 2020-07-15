@@ -64,7 +64,8 @@ public class StripeControllerPaymentMethod {
     @PostMapping("/paymentMethod")
     public ResponseEntity<AhResponse<PaymentMethod>> createPaymentMethod(@RequestBody String paymentMethodCreateParamString) {
         try {
-            final PaymentMethodCreateParams paymentMethodCreateParams = StripeHelper.getGson().fromJson(paymentMethodCreateParamString, PaymentMethodCreateParams.class);
+            final PaymentMethodCreateParams paymentMethodCreateParams =
+                    StripeHelper.getGson().fromJson(paymentMethodCreateParamString, PaymentMethodCreateParams.class);
             final PaymentMethod paymentMethodNew = PaymentMethod.create(paymentMethodCreateParams);
             return buildStripeResponsePaymentMethod(paymentMethodNew, "Error Creating PaymentMethod");
         } catch (Exception e) {
@@ -108,8 +109,8 @@ public class StripeControllerPaymentMethod {
                     StripeHelper.getGson().fromJson(paymentMethodAttachParamString, PaymentMethodAttachParams.class);
 
             final PaymentMethod existingPaymentMethod = PaymentMethod.retrieve(paymentMethodCid);
-            final PaymentMethod pattachedPymentMethod = existingPaymentMethod.attach(paymentMethodAttachParams);
-            return buildStripeResponsePaymentMethod(pattachedPymentMethod, "Error Attaching PaymentMethod.");
+            final PaymentMethod attachedPymentMethod = existingPaymentMethod.attach(paymentMethodAttachParams);
+            return buildStripeResponsePaymentMethod(attachedPymentMethod, "Error Attaching PaymentMethod.");
         } catch (Exception e) {
             log.error("Error Removing PaymentMethod.", e);
             final String errorMessage = e.getMessage();
@@ -123,8 +124,13 @@ public class StripeControllerPaymentMethod {
     private ResponseEntity<AhResponse<PaymentMethod>> buildStripeResponsePaymentMethod(PaymentMethod paymentMethod, String msg) {
         final StripeResponse lastResponse = paymentMethod.getLastResponse();
         if (lastResponse.code() == HttpStatus.OK.value()) {
-            final PaymentMethod fetchedPaymentMethod = StripeHelper.jsonToObject(lastResponse.body(), PaymentMethod.class);
-            return AhResponse.buildOk(fetchedPaymentMethod);
+            try {
+                final PaymentMethod fetchedPaymentMethod = StripeHelper.jsonToObject(lastResponse.body(), PaymentMethod.class);
+                return AhResponse.buildOk(fetchedPaymentMethod);
+            } catch (Exception e) {
+                paymentMethod.setLastResponse(null);
+                return AhResponse.buildOk(paymentMethod);
+            }
         }
         return ahResponseError(msg, lastResponse.code(), paymentMethod);
     }
