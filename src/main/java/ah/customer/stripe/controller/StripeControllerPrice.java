@@ -16,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static ah.helper.AhConstant.STRIPE_REST_LARGE_LIMIT;
 import static ah.helper.StripeRequestHelper.ahResponseError;
 
@@ -83,8 +86,22 @@ public class StripeControllerPrice {
         try {
             final PriceUpdateParams priceUpdateParams = StripeHelper.getGson().fromJson(priceUpdateParamsString, PriceUpdateParams.class);
             final Price existingPrice = Price.retrieve(priceCid);
-            existingPrice.setNickname("NiCkNaMe");
             final Price updatedPrice = existingPrice.update(priceUpdateParams);
+            return buildStripeResponsePrice(updatedPrice, "Error Updating Price");
+        } catch (Exception e) {
+            log.error("Error Updating Price.", e);
+            return AhResponse.internalError(e);
+        }
+    }
+
+    @DeleteMapping("/price/{id}")
+    public ResponseEntity<AhResponse<Price>> setPriceAsInactive(@PathVariable("id") String priceCid) {
+        try {
+            final Price existingPrice = Price.retrieve(priceCid);
+            final Map<String, Object> updateMap = new HashMap<String, Object>() {{
+                put("active", false);
+            }};
+            final Price updatedPrice = existingPrice.update(updateMap);
             return buildStripeResponsePrice(updatedPrice, "Error Updating Price");
         } catch (Exception e) {
             log.error("Error Updating Price.", e);

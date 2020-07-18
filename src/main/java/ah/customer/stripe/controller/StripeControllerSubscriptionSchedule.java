@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static ah.helper.AhConstant.STRIPE_REST_LARGE_LIMIT;
 import static ah.helper.StripeRequestHelper.ahResponseError;
 
 @RestController
@@ -30,9 +31,9 @@ public class StripeControllerSubscriptionSchedule {
         Stripe.apiKey = config.stripeSecretKey();
     }
 
-    @GetMapping("/subscriptionSchedules/all/{scheduleCid}")
-    public ResponseEntity<AhResponse<SubscriptionSchedule>> getSubscriptionSchedulesAll(@PathVariable("scheduleCid") String subscriptionCid) {
-        return getSubscriptionSchedules(String.format(SUBSCRIPTION_AND_LARGE_LIMIT, subscriptionCid));
+    @GetMapping("/subscriptionSchedules/all")
+    public ResponseEntity<AhResponse<SubscriptionSchedule>> getSubscriptionSchedulesAll() {
+        return getSubscriptionSchedules(STRIPE_REST_LARGE_LIMIT);
     }
 
     @GetMapping("/subscriptionSchedules")
@@ -113,8 +114,13 @@ public class StripeControllerSubscriptionSchedule {
             SubscriptionSchedule subscriptionSchedule, String msg) {
         final StripeResponse lastResponse = subscriptionSchedule.getLastResponse();
         if (lastResponse.code() == HttpStatus.OK.value()) {
-            final SubscriptionSchedule fetchedSubscriptionSchedule = StripeHelper.jsonToObject(lastResponse.body(), SubscriptionSchedule.class);
-            return AhResponse.buildOk(fetchedSubscriptionSchedule);
+            try {
+                final SubscriptionSchedule fetchedSubscriptionSchedule = StripeHelper.jsonToObject(lastResponse.body(), SubscriptionSchedule.class);
+                return AhResponse.buildOk(fetchedSubscriptionSchedule);
+            } catch (Exception e) {
+                subscriptionSchedule.setLastResponse(null);
+                return AhResponse.buildOk(subscriptionSchedule);
+            }
         }
         return ahResponseError(msg, lastResponse.code(), subscriptionSchedule);
     }

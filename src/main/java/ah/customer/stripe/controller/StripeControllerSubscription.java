@@ -91,7 +91,7 @@ public class StripeControllerSubscription {
         }
     }
 
-    // No delete for Subscription, jsut Cancel.
+    // No delete for Subscription, just Cancel.
     @DeleteMapping("/subscription/{id}")
     public ResponseEntity<AhResponse<Subscription>> cancelSubscription(@PathVariable("id") String subscriptionCid) {
         try {
@@ -107,8 +107,13 @@ public class StripeControllerSubscription {
     private ResponseEntity<AhResponse<Subscription>> buildStripeResponseSubscription(Subscription subscription, String msg) {
         final StripeResponse lastResponse = subscription.getLastResponse();
         if (lastResponse.code() == HttpStatus.OK.value()) {
-            final Subscription fetchedSubscription = StripeHelper.jsonToObject(lastResponse.body(), Subscription.class);
-            return AhResponse.buildOk(fetchedSubscription);
+            try {
+                final Subscription fetchedSubscription = StripeHelper.jsonToObject(lastResponse.body(), Subscription.class);
+                return AhResponse.buildOk(fetchedSubscription);
+            } catch (Exception e) {
+                subscription.setLastResponse(null);
+                return AhResponse.buildOk(subscription);
+            }
         }
         return ahResponseError(msg, lastResponse.code(), subscription);
     }

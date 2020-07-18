@@ -23,14 +23,11 @@ def get_subscription(subscription_cid):
         ah_debug.raise_error(subscription_response, "Get Subscription : Returned Bad Http Status")
     return subscription_response['entity']
 
-def delete_subscription(subscription_cid):
+def cancel_subscription(subscription_cid):
     response = requests.delete(baseurl + "/subscription/{}".format(subscription_cid))
-    print("Delete Subscription : " + str(response))
+    print("Cancel Subscription : '{}' {}".format(subscription_cid, str(response)))
 
-    response = requests.delete(baseurl + "/subscription/{}".format(subscription_cid))
-    print("Delete Subscription : " + str(response))
     delete_response = json.loads(response.content)
-
     if delete_response['status'] != 200:
         ah_debug.raise_error(delete_response, "Delete Subscription : Returned Bad Http Status")
     return delete_response['entity']
@@ -45,11 +42,11 @@ def list_subscriptions():
         ah_debug.raise_error(subscriptions_response, "List Subscription : Returned Bad Http Status")
     return subscriptions_response['entities']
 
-def list_subscriptions_and_delete():
+def list_subscriptions_and_cancel():
     subscriptions = list_subscriptions()
     i = 0
     for subscription in subscriptions:
         i += 1
         print("--------------------- " + str(i))
         print("Deleting Subscription Id : " + subscription['id'])
-        delete_subscription(subscription['id'])
+        cancel_subscription(subscription['id'])

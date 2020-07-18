@@ -30,7 +30,7 @@ public class StripeControllerSubscriptionItem {
         Stripe.apiKey = config.stripeSecretKey();
     }
 
-    @GetMapping("/subscriptionItems/all/{{scheduleCid}")
+    @GetMapping("/subscriptionItems/all/{scheduleCid}")
     public ResponseEntity<AhResponse<SubscriptionItem>> getSubscriptionItemsAll(@PathVariable("scheduleCid") String subscriptionCid) {
         return getSubscriptionItems(String.format(SUBSCRIPTION_AND_LARGE_LIMIT, subscriptionCid));
     }
@@ -92,7 +92,7 @@ public class StripeControllerSubscriptionItem {
         }
     }
 
-    @DeleteMapping("/subscriptionItem/{id}")
+    @DeleteMapping("/subscriptionItem/delete/{id}")
     public ResponseEntity<AhResponse<SubscriptionItem>> deleteSubscriptionItem(@PathVariable("id") String subscriptionCid) {
         try {
             final SubscriptionItem subscription = SubscriptionItem.retrieve(subscriptionCid);
