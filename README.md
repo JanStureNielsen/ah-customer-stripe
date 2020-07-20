@@ -1,13 +1,15 @@
 # Ad Hoc Markets 
 
+[[_TOC_]]
+
 ### Overview
 The input for all the REST calls in the Stripe Customer Object in json form.  As described at https://stripe.com/docs/api/customers
 
 ### Stack
 * Java 11
 * Spring Boot/Rest
-* Spring Boot (see src/main/java/com/fem/adhoc/StripeApplication.java)
-* Spring Rest (see src/main/java/com/fem/adhoc/controller/StripeController.java)
+* Spring Boot (see src/main/java/ah/Application.java)
+* Spring Rest (see src/main/java/ah/customer/stripe/controller/*Controller.java
 * Lombok
 
 ### Build & Run Jar
@@ -16,44 +18,23 @@ mvn clean package spring-boot:repackage
 
 java -jar ./target/adhocmarkets-stripe-0.0.1-SNAPSHOT.jar
 
+### Python 3 scripts (.../python/stripe/*)
+| Script | Description |
+| ------- | ----------- |
+| ah_make_subscription.py | Small sample making a Customer/Product/Price/Subscription| 
+| ah_delete.py : | Example script removing test data allowed by Stripe |          
+| ah_stripe_tests.py | Example wee integration test |      
 
 ### Misc.
 
-* I tried adding swagger; however, the Stripe Customer object, I'm guessing, has recurstion which 
-caused the swagger page to hang. I lost a few hours on this.
-* I didn't add Spring Data or Caching because there are data elements yet.
-* The 'Update' for Customer is weird.  I don't understand it, it seems the cahgned data is stored under
-the 'metadata' attribute. I lost a few hours attempting to understand this.
+* I tried adding Swagger and OpenAPI; however, the Stripe Customer object, I'm guessing, has recurstion which 
+caused the output pages to hang. I lost a few hours on this.
+* I didn't add Spring Data or Caching because there are no data elements yet.
 
-### curl examples:
+### Misc.
  
-#### Get Customer
-
-```
-curl http://localhost:8080/api/v1/customer/<ID> -X GET 
-```
-
-#### Create Customer
-
-```
-curl http://localhost:8080/api/v1/customer \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{ "description": "My Forth Test Customer" }'   
-```
-
-#### Update Customer
-
-```
-curl http://localhost:8080/api/v1/customer \
-  -X PUT \
-  -H "Content-Type: application/json" \
-  -d '{ "id": "'${CID}'", "description": "(2)My Updated Forth Test Customer", "email" : "bob.bigboy_002@food.me" }'   
-```
-
-#### Delete Customer
-
-```
-curl http://localhost:8080/api/v1/customer/<ID> -X DELETE 
-```
-  
+* No API to remove a Price, but you can manually on the Sripe admin page.
+    * You can archive a Price.
+* No API to Subscription, Subscription Schedule. 
+    * The API allows you to Cancel them
+     
