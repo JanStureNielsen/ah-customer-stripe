@@ -29,4 +29,10 @@ public class StripeHelper {
         return gson.fromJson(json, clazz);
     }
 
+    public static Map<String, Object> inactive() {
+        return new HashMap<String, Object>() {{
+            put("active", false);
+        }};
+    }
+
 }
