@@ -18,13 +18,13 @@ The input for all the REST calls in the [Stripe Customer Object in JSON form](ht
 
 | Script | Description |
 | ------- | ----------- |
-| [ah_make_subscription.py](python/stripe/ah_make_subscription.py) | Small sample making a Customer/Product/Price/Subscription|
-| [ah_delete.py](python/stripe/ah_delete.py) | Example script removing test data allowed by Stripe |
-| [ah_stripe_tests.py](python/stripe/ah_stripe_tests.py) | Example wee integration test |
+| [ah_make_subscription.py](python/stripe/ah_make_subscription.py) | Create a Customer/Product/Price/Subscription|
+| [ah_delete.py](python/stripe/ah_delete.py) | Remove test data as allowed by Stripe |
+| [ah_stripe_tests.py](python/stripe/ah_stripe_tests.py) | Example integration tests |
 
 ### Misc.
 
-* I tried adding swagger; however, the Stripe Customer object, I'm guessing, has recursion which 
+* I tried adding Swagger; however, the Stripe Customer object, I'm guessing, has recursion which 
 caused the Swagger page to hang. I lost a few hours on this.
 * I didn't add Spring Data or Caching because there are data elements yet.
 * No API to remove a Price, but you can manually on the Stripe admin page; you can archive a Price.
@@ -35,31 +35,4 @@ Requires authentication.
 
 ```
 curl http://localhost:8080/api/customer/<ID> -X GET 
-```
-
-#### Create Customer
-Starts as anonymous, then creates a customer with a password.
-
-```
-curl http://localhost:8080/api/customer \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{ "description": "My Forth Test Customer" }'   
-```
-
-#### Update Customer
-Requires authentication. This should be a non-destructive update.
-
-```
-curl http://localhost:8080/api/customer \
-  -X PUT \
-  -H "Content-Type: application/json" \
-  -d '{ "id": "'${CID}'", "description": "(2)My Updated Forth Test Customer", "email" : "bob.bigboy_002@food.me" }'   
-```
-
-#### Delete Customer
-Requires admin authentication.
-
-```
-curl http://localhost:8080/api/customer/<ID> -X DELETE 
 ```
