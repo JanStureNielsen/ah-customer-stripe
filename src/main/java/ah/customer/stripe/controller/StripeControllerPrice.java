@@ -1,8 +1,21 @@
 package ah.customer.stripe.controller;
 
-import ah.config.StripeConfig;
-import ah.helper.StripeHelper;
-import ah.rest.AhResponse;
+import static ah.helper.AhConstant.STRIPE_REST_LARGE_LIMIT;
+import static ah.helper.StripeRequestHelper.ahResponseError;
+import static ah.helper.StripeHelper.inactive;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.stripe.Stripe;
 import com.stripe.model.Price;
 import com.stripe.model.PriceCollection;
@@ -10,17 +23,11 @@ import com.stripe.net.StripeResponse;
 import com.stripe.param.PriceCreateParams;
 import com.stripe.param.PriceListParams;
 import com.stripe.param.PriceUpdateParams;
+
+import ah.config.StripeConfig;
+import ah.helper.StripeHelper;
+import ah.rest.AhResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static ah.helper.AhConstant.STRIPE_REST_LARGE_LIMIT;
-import static ah.helper.StripeRequestHelper.ahResponseError;
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -98,10 +105,7 @@ public class StripeControllerPrice {
     public ResponseEntity<AhResponse<Price>> setPriceAsInactive(@PathVariable("id") String priceCid) {
         try {
             final Price existingPrice = Price.retrieve(priceCid);
-            final Map<String, Object> updateMap = new HashMap<String, Object>() {{
-                put("active", false);
-            }};
-            final Price updatedPrice = existingPrice.update(updateMap);
+            final Price updatedPrice = existingPrice.update(inactive());
             return buildStripeResponsePrice(updatedPrice, "Error Updating Price");
         } catch (Exception e) {
             log.error("Error Updating Price.", e);
