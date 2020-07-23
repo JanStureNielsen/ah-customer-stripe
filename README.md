@@ -29,10 +29,3 @@ caused the Swagger page to hang. I lost a few hours on this.
 * I didn't add Spring Data or Caching because there are data elements yet.
 * No API to remove a Price, but you can manually on the Stripe admin page; you can archive a Price.
 * No API to Subscription, Subscription Schedule; the API allows you to cancel them.
- 
-#### Get Customer
-Requires authentication.
-
-```
-curl http://localhost:8080/api/customer/<ID> -X GET 
-```
