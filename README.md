@@ -6,7 +6,17 @@
 The input for all the REST calls in the Stripe Customer Object in JSON form.  As described at https://stripe.com/docs/api/customers
 
 ### Stack
+<<<<<<< HEAD
 * Java 11
+=======
+* Spring Boot REST
+* Spring Boot (see src/main/java/ah/customer/stripe/Application.java)
+* Spring Rest (see src/main/java/ah/customer/stripe/controller/StripeController.java)
+* Java 11
+* Spring Boot/Rest
+* Spring Boot (see src/main/java/ah/Application.java)
+* Spring Rest (see src/main/java/ah/customer/stripe/controller/*Controller.java
+>>>>>>> 8aaaed6d5691b12d11809d9bdc19acb003f1319a
 * Lombok
 * Spring Boot (see src/main/java/ah/customer/stripe/Application.java)
 * Spring Boot REST
@@ -27,6 +37,7 @@ java -jar ./target/adhocmarkets-stripe-0.0.1-SNAPSHOT.jar
 
 ### Misc.
 
+<<<<<<< HEAD
 * I tried adding swagger; however, the Stripe Customer object, I'm guessing, has recursion which 
 caused the swagger page to hang. I lost a few hours on this.
 * I didn't add Spring Data or Caching because there are data elements yet.
@@ -34,19 +45,21 @@ caused the swagger page to hang. I lost a few hours on this.
 the 'metadata' attribute. I lost a few hours attempting to understand this.
 
 ### Misc.
+=======
+>>>>>>> 8aaaed6d5691b12d11809d9bdc19acb003f1319a
  
 #### Get Customer
 Requires authentication.
 
 ```
-curl http://localhost:8080/api/v1/customer/<ID> -X GET 
+curl http://localhost:8080/api/customer/<ID> -X GET 
 ```
 
 #### Create Customer
 Starts as anonymous, then creates a customer with a password.
 
 ```
-curl http://localhost:8080/api/v1/customer \
+curl http://localhost:8080/api/customer \
   -X POST \
   -H "Content-Type: application/json" \
   -d '{ "description": "My Forth Test Customer" }'   
@@ -56,7 +69,7 @@ curl http://localhost:8080/api/v1/customer \
 Requires authentication. This should be a non-destructive update.
 
 ```
-curl http://localhost:8080/api/v1/customer \
+curl http://localhost:8080/api/customer \
   -X PUT \
   -H "Content-Type: application/json" \
   -d '{ "id": "'${CID}'", "description": "(2)My Updated Forth Test Customer", "email" : "bob.bigboy_002@food.me" }'   
@@ -66,5 +79,5 @@ curl http://localhost:8080/api/v1/customer \
 Requires admin authentication.
 
 ```
-curl http://localhost:8080/api/v1/customer/<ID> -X DELETE 
+curl http://localhost:8080/api/customer/<ID> -X DELETE 
 ```
