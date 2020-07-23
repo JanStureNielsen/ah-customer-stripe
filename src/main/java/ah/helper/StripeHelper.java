@@ -71,7 +71,7 @@ public class StripeHelper {
         try {
             return customerRetrieve(customerId).update(customerUpdateParams(customerUpdateParamString));
         } catch (StripeException x) {
-            throw new StripeGatewayException(x, "Cutomer update failed for '%s' with '%s'", customerId, customerUpdateParamString);
+            throw new StripeGatewayException(x, "Customer update failed for '%s' with '%s'", customerId, customerUpdateParamString);
         }
     }
 
@@ -79,7 +79,7 @@ public class StripeHelper {
         try {
             return customerRetrieve(customerId).delete();
         } catch (StripeException x) {
-            throw new StripeGatewayException(x, "Cutomer delete failed for '%s'", customerId);
+            throw new StripeGatewayException(x, "Customer delete failed for '%s'", customerId);
         }
     }
 
