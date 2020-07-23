@@ -10,15 +10,14 @@ import java.time.LocalDateTime;
 
 @Getter
 public class AhError {
+    private @NotNull final HttpStatus status;
 
-    private @NotNull
-    final HttpStatus status;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-    private @NotNull LocalDateTime timestamp;
-    private @NotNull
-    final String message;
-    private @NotNull
-    final String debugMessage;
+    private @NotNull final LocalDateTime timestamp;
+
+    private @NotNull final String message;
+
+    private @NotNull final String debugMessage;
 
     AhError() {
         this(HttpStatus.OK);
@@ -50,4 +49,5 @@ public class AhError {
     public int getStatusValue() {
         return status.value();
     }
+
 }
