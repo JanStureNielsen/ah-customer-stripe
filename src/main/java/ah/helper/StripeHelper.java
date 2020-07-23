@@ -28,4 +28,5 @@ public class StripeHelper {
     public static <T> T jsonToObject(String json, Class<T> clazz) {
         return gson.fromJson(json, clazz);
     }
+
 }
