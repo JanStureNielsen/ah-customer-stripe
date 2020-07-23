@@ -1,9 +1,10 @@
 package ah.helper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import java.util.Map;
 
 public class StripeHelper {
     private StripeHelper() {
@@ -29,7 +30,8 @@ public class StripeHelper {
         return gson.fromJson(json, clazz);
     }
 
-    public static Map<String, Object> inactive() {
+    @SuppressWarnings("serial")
+	public static Map<String, Object> inactive() {
         return new HashMap<String, Object>() {{
             put("active", false);
         }};
