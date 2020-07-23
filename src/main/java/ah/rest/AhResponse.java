@@ -78,9 +78,10 @@ public class AhResponse<T extends ApiResource> {
         return ResponseEntity.status(status).body(AhResponse.body(new AhError(status, msg)));
     }
 
-    // Can not delete because of some chid record.
+    // Can not delete because of some child record.
     public static <T extends ApiResource> ResponseEntity<AhResponse<T>> conflictError(String message, Exception e) {
         final HttpStatus status = HttpStatus.CONFLICT;
         return ResponseEntity.status(status).body(AhResponse.body(new AhError(status, message, e)));
     }
+
 }
