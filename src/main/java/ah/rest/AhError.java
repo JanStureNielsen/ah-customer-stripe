@@ -43,6 +43,7 @@ public class AhError {
         this.status = status;
         this.message = message;
         this.debugMessage = null != ex ? ex.getLocalizedMessage() : "No exception captured";
+        this.timestamp = timestamp;
     }
 
     @JsonProperty("statusValue")
