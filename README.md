@@ -4,11 +4,9 @@
 The input for all the REST calls in the [Stripe Customer Object in JSON form](https://stripe.com/docs/api/customers).
 
 ### Stack
-* Java 11
-* Lombok
-* Spring Boot (see src/main/java/ah/customer/stripe/Application.java)
-* Spring REST (see [src/main/java/ah/customer/stripe/controller/StripeController.java]())
-* Spring Boot (see src/main/java/ah/customer/stripe/Application.java)
+* Java 11 + Lombok
+* Spring Boot (see [Application.java](src/main/java/ah/customer/stripe/))
+* Spring REST (see [StripeController.java](src/main/java/ah/customer/stripe/controller/StripeController.java))
 
 ### Building & Running
 
