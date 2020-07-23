@@ -85,7 +85,6 @@ public class StripeControllerPaymentSource {
         try {
             final SourceCreateParams sourceCreateParams =
                     StripeHelper.getGson().fromJson(paymentSourceCollectionCreateParamsString, SourceCreateParams.class);
-            final Customer customer = Customer.retrieve(customerCid);
 
             final Source paymentSourceNew = Source.create(sourceCreateParams);
             return buildStripeResponseSource(paymentSourceNew, "Error Creating Source");
