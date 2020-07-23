@@ -20,9 +20,9 @@ The input for all the REST calls in the [Stripe Customer Object in JSON form](ht
 
 | Script | Description |
 | ------- | ----------- |
-| [ah_make_subscription.py](blob/master/python/stripe/ah_make_subscription.py) | Small sample making a Customer/Product/Price/Subscription|
-| [ah_delete.py](blob/master/python/stripe/ah_delete.py) | Example script removing test data allowed by Stripe |
-| [ah_stripe_tests.py](blob/master/python/stripe/ah_stripe_tests.py) | Example wee integration test |
+| [ah_make_subscription.py](python/stripe/ah_make_subscription.py) | Small sample making a Customer/Product/Price/Subscription|
+| [ah_delete.py](python/stripe/ah_delete.py) | Example script removing test data allowed by Stripe |
+| [ah_stripe_tests.py](python/stripe/ah_stripe_tests.py) | Example wee integration test |
 
 ### Misc.
 
