@@ -10,8 +10,10 @@ The input for all the REST calls in the [Stripe Customer Object in JSON form](ht
 
 ### Building & Running gateway
 
-    mvn clean package spring-boot:repackage
-
+    # build executable JAR
+    mvn package
+    
+    # run executable JAR
     java -jar ./target/*.jar
 
 ### Python 3 test scripts
