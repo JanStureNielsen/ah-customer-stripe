@@ -10,14 +10,28 @@ import java.util.List;
 
 @Getter
 public class AhResponse<T extends ApiResource> {
-
     private static final int httpStatusOk = HttpStatus.OK.value();
 
-    private AhError apiError;
-    private T entity;
-    private List<T> entities;
+    private final AhError apiError;
+    private final T entity;
+    private final List<T> entities;
 
-    private AhResponse() {
+    private AhResponse(AhError error) {
+        this(error, null, null);
+    }
+
+    private AhReponse(T entity) {
+        this(null, entity, null);
+    }
+
+    private AhReponse(List<T> entities) {
+        this(null, null, entities);
+    }
+
+    private AhReponse(AhError error, T entity, List<T> entities) {
+        this.apiError = error;
+        this.entity = entity;
+        this.entities = entities;
     }
 
     @JsonProperty("status")
@@ -26,28 +40,19 @@ public class AhResponse<T extends ApiResource> {
     }
 
     public static <T extends ApiResource> AhResponse<T> body(T entity) {
-        final AhResponse<T> res = new AhResponse<>();
-        res.entity = entity;
-        return res;
+        return new AhResponse<>(entity);
     }
 
     public static <T extends ApiResource> AhResponse<T> body(List<T> entities) {
-        final AhResponse<T> res = new AhResponse<>();
-        res.entities = entities;
-        return res;
+        return new AhResponse<>(entities);
     }
 
     public static <T extends ApiResource> AhResponse<T> body(T entity, AhError apiError) {
-        final AhResponse<T> res = new AhResponse<>();
-        res.entity = entity;
-        res.apiError = apiError;
-        return res;
+        return new AhError(apiError, entity, null);
     }
 
     public static <T extends ApiResource> AhResponse<T> body(AhError apiError) {
-        final AhResponse<T> res = new AhResponse<>();
-        res.apiError = apiError;
-        return res;
+        return new AhError(apiError);
     }
 
     public static <T extends ApiResource> ResponseEntity<AhResponse<T>> buildOk(T entity) {
