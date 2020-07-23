@@ -8,19 +8,22 @@ The input for all the REST calls in the [Stripe Customer Object in JSON form](ht
 * Spring Boot (see [Application.java](src/main/java/ah/Application.java))
 * Spring REST (see [Stripe controllers](src/main/java/ah/customer/stripe/controller/))
 
-### Building & Running
+### Building & Running gateway
 
     mvn clean package spring-boot:repackage
 
     java -jar ./target/*.jar
 
-### Python 3 scripts (.../python/stripe/*)
+### Python 3 test scripts
 
-| Script | Description |
-| ------- | ----------- |
-| [ah_make_subscription.py](python/stripe/ah_make_subscription.py) | Create a Customer/Product/Price/Subscription|
-| [ah_delete.py](python/stripe/ah_delete.py) | Remove test data as allowed by Stripe |
-| [ah_stripe_tests.py](python/stripe/ah_stripe_tests.py) | Example integration tests |
+    # create customer, product, price, subscription
+    python3 python/stripe/ah_make_subscription.py
+    
+    # delete test data as allowed by Stripe
+    python3 python/stripe/ah_delete.py
+    
+    # run Strip integration tests
+    python3 python/stripe/ah_stripe_tests.py
 
 ### Misc.
 
