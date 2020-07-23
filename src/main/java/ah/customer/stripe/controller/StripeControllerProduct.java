@@ -16,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static ah.helper.AhConstant.STRIPE_REST_LARGE_LIMIT;
 import static ah.helper.StripeRequestHelper.ahResponseError;
 
@@ -92,18 +95,37 @@ public class StripeControllerProduct {
         }
     }
 
+    @PutMapping("/product/inactive/{id}")
+    public ResponseEntity<AhResponse<Product>> inactivateProduct(@PathVariable("id") String productCid) {
+        try {
+            final Map<String, Object> inactiveMap = new HashMap<String, Object>() {{
+                put("active", false);
+            }};
+            final Product existingProduct = Product.retrieve(productCid);
+            final Product updatedProduct = existingProduct.update(inactiveMap);
+            return buildStripeResponseProduct(updatedProduct, "Error Inactivating Product");
+        } catch (Exception e) {
+            log.error("Error Inactivating Product.", e);
+            return AhResponse.internalError(e);
+        }
+    }
+
     @DeleteMapping("/product/{id}")
     public ResponseEntity<AhResponse<Product>> deleteProduct(@PathVariable("id") String productCid) {
+        Product product = null;
         try {
-            final Product product = Product.retrieve(productCid);
+            product = Product.retrieve(productCid);
             final Product deletedProduct = product.delete();
             return buildStripeResponseProduct(deletedProduct, "Error Product.");
         } catch (Exception e) {
-            log.error("Error Removing Product.", e);
             final String errorMessage = e.getMessage();
             if (errorMessage.contains("cannot be deleted")) {
-                return AhResponse.conflictError("Product cannot be deleted, still has attached Price.", e);
+                final String errMsg = String.format("Product '%s/%s' cannot be deleted, still has attached Price.  Attempting to Inactivate.",
+                        product != null ? product.getName() : "", productCid);
+                log.error(errMsg);
+                return inactivateProduct(productCid);
             }
+            log.error("Error Removing Product.", e);
             return AhResponse.internalError(e);
         }
     }

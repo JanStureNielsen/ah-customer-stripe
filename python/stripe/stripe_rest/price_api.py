@@ -33,7 +33,8 @@ def delete_price(price_cid):
     return delete_response['entity']
 
 def list_prices():
-    response = requests.get(baseurl + "/prices/all")
+    list_dict = """{"limit": 999999, "active": True}"""
+    response = requests.request(method = "get", url = baseurl + "/prices", data = list_dict)
     print("List Price : " + str(response))
     prices_response = json.loads(response.content)
 
