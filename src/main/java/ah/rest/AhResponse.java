@@ -16,19 +16,7 @@ public class AhResponse<T extends ApiResource> {
     private final T entity;
     private final List<T> entities;
 
-    private AhResponse(AhError error) {
-        this(error, null, null);
-    }
-
-    private AhReponse(T entity) {
-        this(null, entity, null);
-    }
-
-    private AhReponse(List<T> entities) {
-        this(null, null, entities);
-    }
-
-    private AhReponse(AhError error, T entity, List<T> entities) {
+    private AhResponse(AhError error, T entity, List<T> entities) {
         this.apiError = error;
         this.entity = entity;
         this.entities = entities;
@@ -40,19 +28,19 @@ public class AhResponse<T extends ApiResource> {
     }
 
     public static <T extends ApiResource> AhResponse<T> body(T entity) {
-        return new AhResponse<>(entity);
+        return new AhResponse<T>(null, entity, null);
     }
 
     public static <T extends ApiResource> AhResponse<T> body(List<T> entities) {
-        return new AhResponse<>(entities);
+        return new AhResponse<>(null, null, entities);
     }
 
     public static <T extends ApiResource> AhResponse<T> body(T entity, AhError apiError) {
-        return new AhError(apiError, entity, null);
+        return new AhResponse<T>(apiError, entity, null);
     }
 
     public static <T extends ApiResource> AhResponse<T> body(AhError apiError) {
-        return new AhError(apiError);
+        return new AhResponse<T>(apiError, null, null);
     }
 
     public static <T extends ApiResource> ResponseEntity<AhResponse<T>> buildOk(T entity) {
