@@ -1,14 +1,17 @@
 package ah.rest;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.stripe.net.ApiResource;
-import lombok.Getter;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.stripe.net.ApiResource;
 
-@Getter
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter @Builder
 public class AhResponse<T extends ApiResource> {
     private static final int httpStatusOk = HttpStatus.OK.value();
 
@@ -16,31 +19,25 @@ public class AhResponse<T extends ApiResource> {
     private final T entity;
     private final List<T> entities;
 
-    private AhResponse(AhError error, T entity, List<T> entities) {
-        this.apiError = error;
-        this.entity = entity;
-        this.entities = entities;
-    }
-
     @JsonProperty("status")
     public int getStatus() {
         return apiError != null ? apiError.getStatusValue() : httpStatusOk;
     }
 
     public static <T extends ApiResource> AhResponse<T> body(T entity) {
-        return new AhResponse<T>(null, entity, null);
+        return AhResponse.<T>builder().entity(entity).build();
     }
 
     public static <T extends ApiResource> AhResponse<T> body(List<T> entities) {
-        return new AhResponse<>(null, null, entities);
+        return AhResponse.<T>builder().entities(entities).build();
     }
 
     public static <T extends ApiResource> AhResponse<T> body(T entity, AhError apiError) {
-        return new AhResponse<T>(apiError, entity, null);
+        return AhResponse.<T>builder().apiError(apiError).entity(entity).build();
     }
 
     public static <T extends ApiResource> AhResponse<T> body(AhError apiError) {
-        return new AhResponse<T>(apiError, null, null);
+        return AhResponse.<T>builder().apiError(apiError).build();
     }
 
     public static <T extends ApiResource> ResponseEntity<AhResponse<T>> buildOk(T entity) {
