@@ -1,40 +1,36 @@
 # Ad Hoc Markets 
 
-[[_TOC_]]
-
 ### Overview
-The input for all the REST calls in the Stripe Customer Object in json form.  As described at https://stripe.com/docs/api/customers
+The input for all the REST calls in the [Stripe Customer Object in JSON form](https://stripe.com/docs/api/customers).
 
 ### Stack
-* Java 11
-* Spring Boot/Rest
-* Spring Boot (see src/main/java/ah/Application.java)
-* Spring Rest (see src/main/java/ah/customer/stripe/controller/*Controller.java
-* Lombok
+* Java 8+ with Lombok
+* Spring Boot (see [Application.java](src/main/java/ah/Application.java))
+* Spring REST (see [Stripe controllers](src/main/java/ah/customer/stripe/controller/))
 
-### Build & Run Jar
+### Building & Running gateway
 
-mvn clean package spring-boot:repackage
+    # build executable JAR
+    mvn package
+    
+    # run executable JAR
+    java -jar ./target/*.jar
 
-java -jar ./target/adhocmarkets-stripe-0.0.1-SNAPSHOT.jar
+### Python 3 test scripts
 
-### Python 3 scripts (.../python/stripe/*)
-| Script | Description |
-| ------- | ----------- |
-| ah_make_subscription.py | Small sample making a Customer/Product/Price/Subscription| 
-| ah_delete.py : | Example script removing test data allowed by Stripe |          
-| ah_stripe_tests.py | Example wee integration test |      
-
-### Misc.
-
-* I tried adding Swagger and OpenAPI; however, the Stripe Customer object, I'm guessing, has recurstion which 
-caused the output pages to hang. I lost a few hours on this.
-* I didn't add Spring Data or Caching because there are no data elements yet.
+    # create customer, product, price, subscription
+    python3 python/stripe/ah_make_subscription.py
+    
+    # delete test data as allowed by Stripe
+    python3 python/stripe/ah_delete.py
+    
+    # run Strip integration tests
+    python3 python/stripe/ah_stripe_tests.py
 
 ### Misc.
- 
-* No API to remove a Price, but you can manually on the Sripe admin page.
-    * You can archive a Price.
-* No API to Subscription, Subscription Schedule. 
-    * The API allows you to Cancel them
-     
+
+* I tried adding Swagger; however, the Stripe Customer object, I'm guessing, has recursion which 
+caused the Swagger page to hang. I lost a few hours on this.
+* I didn't add Spring Data or Caching because there are data elements yet.
+* No API to remove a Price, but you can manually on the Stripe admin page; you can archive a Price.
+* No API to Subscription, Subscription Schedule; the API allows you to cancel them.

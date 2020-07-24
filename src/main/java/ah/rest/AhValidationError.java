@@ -17,4 +17,5 @@ class AhValidationError extends AhSubError {
         this.object = object;
         this.message = message;
     }
+
 }

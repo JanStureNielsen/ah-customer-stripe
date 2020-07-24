@@ -1,8 +1,21 @@
 package ah.customer.stripe.controller;
 
-import ah.config.StripeConfig;
-import ah.helper.StripeHelper;
-import ah.rest.AhResponse;
+import static ah.helper.AhConstant.STRIPE_REST_LARGE_LIMIT;
+import static ah.helper.StripeRequestHelper.ahResponseError;
+import static ah.helper.StripeHelper.inactive;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.stripe.Stripe;
 import com.stripe.model.Product;
 import com.stripe.model.ProductCollection;
@@ -10,17 +23,11 @@ import com.stripe.net.StripeResponse;
 import com.stripe.param.ProductCreateParams;
 import com.stripe.param.ProductListParams;
 import com.stripe.param.ProductUpdateParams;
+
+import ah.config.StripeConfig;
+import ah.helper.StripeHelper;
+import ah.rest.AhResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static ah.helper.AhConstant.STRIPE_REST_LARGE_LIMIT;
-import static ah.helper.StripeRequestHelper.ahResponseError;
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -98,11 +105,8 @@ public class StripeControllerProduct {
     @PutMapping("/product/inactive/{id}")
     public ResponseEntity<AhResponse<Product>> inactivateProduct(@PathVariable("id") String productCid) {
         try {
-            final Map<String, Object> inactiveMap = new HashMap<String, Object>() {{
-                put("active", false);
-            }};
             final Product existingProduct = Product.retrieve(productCid);
-            final Product updatedProduct = existingProduct.update(inactiveMap);
+            final Product updatedProduct = existingProduct.update(inactive());
             return buildStripeResponseProduct(updatedProduct, "Error Inactivating Product");
         } catch (Exception e) {
             log.error("Error Inactivating Product.", e);

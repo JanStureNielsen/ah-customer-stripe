@@ -10,44 +10,37 @@ import java.util.List;
 
 @Getter
 public class AhResponse<T extends ApiResource> {
-
     private static final int httpStatusOk = HttpStatus.OK.value();
 
-    private AhError apiError;
-    private T entity;
-    private List<T> entities;
+    private final AhError apiError;
+    private final T entity;
+    private final List<T> entities;
 
-    private AhResponse() {
+    private AhResponse(AhError error, T entity, List<T> entities) {
+        this.apiError = error;
+        this.entity = entity;
+        this.entities = entities;
     }
 
     @JsonProperty("status")
     public int getStatus() {
-        return apiError != null ? apiError.getStatus().value() : httpStatusOk;
+        return apiError != null ? apiError.getStatusValue() : httpStatusOk;
     }
 
     public static <T extends ApiResource> AhResponse<T> body(T entity) {
-        final AhResponse<T> res = new AhResponse<>();
-        res.entity = entity;
-        return res;
+        return new AhResponse<T>(null, entity, null);
     }
 
     public static <T extends ApiResource> AhResponse<T> body(List<T> entities) {
-        final AhResponse<T> res = new AhResponse<>();
-        res.entities = entities;
-        return res;
+        return new AhResponse<>(null, null, entities);
     }
 
     public static <T extends ApiResource> AhResponse<T> body(T entity, AhError apiError) {
-        final AhResponse<T> res = new AhResponse<>();
-        res.entity = entity;
-        res.apiError = apiError;
-        return res;
+        return new AhResponse<T>(apiError, entity, null);
     }
 
     public static <T extends ApiResource> AhResponse<T> body(AhError apiError) {
-        final AhResponse<T> res = new AhResponse<>();
-        res.apiError = apiError;
-        return res;
+        return new AhResponse<T>(apiError, null, null);
     }
 
     public static <T extends ApiResource> ResponseEntity<AhResponse<T>> buildOk(T entity) {
@@ -60,22 +53,23 @@ public class AhResponse<T extends ApiResource> {
 
     public static <T extends ApiResource> ResponseEntity<AhResponse<T>> internalError() {
         final HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        return ResponseEntity.status(status).body(AhResponse.body(new AhError(status)));
+        return ResponseEntity.status(status).body(AhResponse.body(AhError.builder().status(status).build()));
     }
 
     public static <T extends ApiResource> ResponseEntity<AhResponse<T>> internalError(Exception e) {
         final HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        return ResponseEntity.status(status).body(AhResponse.body(new AhError(status, e)));
+        return ResponseEntity.status(status).body(AhResponse.body(AhError.builder().status(status).cause(e).build()));
     }
 
     public static <T extends ApiResource> ResponseEntity<AhResponse<T>> internalError(String msg) {
         final HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        return ResponseEntity.status(status).body(AhResponse.body(new AhError(status, msg)));
+        return ResponseEntity.status(status).body(AhResponse.body(AhError.builder().status(status).message(msg).build()));
     }
 
-    // Can not delete because of some chid record.
+    // Can not delete because of some child record.
     public static <T extends ApiResource> ResponseEntity<AhResponse<T>> conflictError(String message, Exception e) {
         final HttpStatus status = HttpStatus.CONFLICT;
-        return ResponseEntity.status(status).body(AhResponse.body(new AhError(status, message, e)));
+        return ResponseEntity.status(status).body(AhResponse.body(AhError.builder().status(status).message(message).cause(e).build()));
     }
+
 }

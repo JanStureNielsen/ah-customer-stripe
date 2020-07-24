@@ -17,7 +17,6 @@
 
     <properties>
         <assertj.core.version>3.16.1</assertj.core.version>
-        <lombok.version>1.18.12</lombok.version>
         <myspring.framework.version>2.3.1.RELEASE</myspring.framework.version>
         <springdoc.version>1.4.3</springdoc.version>
         <stripe.version>19.27.0</stripe.version>
@@ -30,7 +29,6 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>${validation.version}</version>
         </dependency>
         <dependency>
             <groupId>com.stripe</groupId>

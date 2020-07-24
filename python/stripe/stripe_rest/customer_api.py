@@ -6,7 +6,7 @@ from stripe_rest import ah_debug, ah_constant
 baseurl = ah_constant.baseurl()
 
 def create_customer(params):
-    response = requests.post(baseurl + "/customer", params)
+    response = requests.post(baseurl + "/customers", params)
     print("Create Customer : " + str(response))
     customer_response = json.loads(response.content)
 
@@ -15,7 +15,7 @@ def create_customer(params):
     return customer_response['entity']
 
 def get_customer(custId):
-    response = requests.get(baseurl + "/customer/{}".format(custId))
+    response = requests.get(baseurl + "/customers/{}".format(custId))
     print("Get Customer : " + str(response))
     customer_response = json.loads(response.content)
 
@@ -24,7 +24,7 @@ def get_customer(custId):
     return customer_response['entity']
 
 def update_customer(cust_cid, params):
-    response = requests.request(method = 'put', url = baseurl + "/customer/{}".format(cust_cid), data = params)
+    response = requests.request(method = 'put', url = baseurl + "/customers/{}".format(cust_cid), data = params)
     print("Update Customer : " + str(response))
 
     update_response = json.loads(response.content)
@@ -33,7 +33,7 @@ def update_customer(cust_cid, params):
     return update_response['entity']
 
 def delete_customer(cust_cid):
-    response = requests.delete(baseurl + "/customer/{}".format(cust_cid))
+    response = requests.delete(baseurl + "/customers/{}".format(cust_cid))
     print("Delete Customer : " + str(response))
 
     delete_response = json.loads(response.content)
