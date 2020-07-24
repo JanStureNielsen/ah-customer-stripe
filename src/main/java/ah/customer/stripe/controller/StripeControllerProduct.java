@@ -106,7 +106,7 @@ public class StripeControllerProduct {
     public ResponseEntity<AhResponse<Product>> inactivateProduct(@PathVariable("id") String productCid) {
         try {
             final Product existingProduct = Product.retrieve(productCid);
-            final Product updatedProduct = existingProduct.update(inactive());
+            final Product updatedProduct = existingProduct.update(inactive);
             return buildStripeResponseProduct(updatedProduct, "Error Inactivating Product");
         } catch (Exception e) {
             log.error("Error Inactivating Product.", e);

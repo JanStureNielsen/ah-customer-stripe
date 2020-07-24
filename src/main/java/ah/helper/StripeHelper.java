@@ -13,11 +13,17 @@ import com.stripe.param.CustomerListParams;
 import com.stripe.param.CustomerUpdateParams;
 
 public class StripeHelper {
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    @SuppressWarnings("serial")
+	public static final Map<String, Object> inactive = new HashMap<String, Object>() {{
+        put("active", false);
+    }};
+
     private StripeHelper() {
     }
 
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
+    // TODO: make this private...
     public static Gson getGson() {
         return gson;
     }
@@ -34,13 +40,6 @@ public class StripeHelper {
 
     public static <T> T jsonToObject(String json, Class<T> clazz) {
         return gson.fromJson(json, clazz);
-    }
-
-    @SuppressWarnings("serial")
-    public static Map<String, Object> inactive() {
-        return new HashMap<String, Object>() {{
-            put("active", false);
-        }};
     }
 
     public static CustomerCollection customerCollection(String customerListParamString) {
@@ -87,12 +86,12 @@ public class StripeHelper {
         return gson.fromJson(customerCreateParamString, CustomerCreateParams.class);
     }
 
-    private static CustomerListParams customerListParams(String customerListParamString) {
-        return gson.fromJson(customerListParamString, CustomerListParams.class);
-    }
-
     private static CustomerUpdateParams customerUpdateParams(String customerUpdateParamString) {
         return gson.fromJson(customerUpdateParamString, CustomerUpdateParams.class);
+    }
+
+    private static CustomerListParams customerListParams(String customerListParamString) {
+        return gson.fromJson(customerListParamString, CustomerListParams.class);
     }
 
     private static CustomerCollection customerCollection(CustomerListParams customerListParams) throws StripeException {

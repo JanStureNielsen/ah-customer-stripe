@@ -105,7 +105,7 @@ public class StripeControllerPrice {
     public ResponseEntity<AhResponse<Price>> setPriceAsInactive(@PathVariable("id") String priceCid) {
         try {
             final Price existingPrice = Price.retrieve(priceCid);
-            final Price updatedPrice = existingPrice.update(inactive());
+            final Price updatedPrice = existingPrice.update(inactive);
             return buildStripeResponsePrice(updatedPrice, "Error Updating Price");
         } catch (Exception e) {
             log.error("Error Updating Price.", e);
