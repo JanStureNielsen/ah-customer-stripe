@@ -1,27 +1,33 @@
 package ah.customer.stripe.controller;
 
-import ah.config.StripeConfig;
-import ah.helper.StripeHelper;
-import ah.rest.AhResponse;
+import static ah.helper.AhConstant.STRIPE_REST_LARGE_LIMIT;
+import static ah.helper.HelperSubscription.buildSubscriptionCollectionResponse;
+import static ah.helper.HelperSubscription.buildSubscriptionResponse;
+import static ah.helper.HelperSubscription.subscriptionCancel;
+import static ah.helper.HelperSubscription.subscriptionCreate;
+import static ah.helper.HelperSubscription.subscriptionGet;
+import static ah.helper.HelperSubscription.subscriptionUpdate;
+import static ah.helper.HelperSubscription.subscriptionsGet;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.stripe.Stripe;
 import com.stripe.model.Subscription;
-import com.stripe.model.SubscriptionCollection;
-import com.stripe.net.StripeResponse;
-import com.stripe.param.SubscriptionCreateParams;
-import com.stripe.param.SubscriptionListParams;
-import com.stripe.param.SubscriptionUpdateParams;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import static ah.helper.AhConstant.STRIPE_REST_LARGE_LIMIT;
-import static ah.helper.StripeRequestHelper.ahResponseError;
+import ah.config.StripeConfig;
+import ah.rest.AhResponse;
 
 @RestController
-@RequestMapping("/api/v1/")
-@Slf4j
+@RequestMapping("/api/v1/subscriptions")
 public class StripeControllerSubscription {
 
     @Autowired
@@ -29,92 +35,36 @@ public class StripeControllerSubscription {
         Stripe.apiKey = config.stripeSecretKey();
     }
 
-    @GetMapping("/subscriptions/all")
+    @GetMapping("/all")
     public ResponseEntity<AhResponse<Subscription>> getSubscriptions() {
         return getSubscriptions(STRIPE_REST_LARGE_LIMIT);
     }
 
-    @GetMapping("/subscriptions")
+    @GetMapping("/")
     public ResponseEntity<AhResponse<Subscription>> getSubscriptions(@RequestBody String subscriptionListParamsString) {
-        try {
-            final SubscriptionListParams subscriptionListParams = StripeHelper.getGson().fromJson(subscriptionListParamsString, SubscriptionListParams.class);
-            final SubscriptionCollection subscriptionCollection = Subscription.list(subscriptionListParams);
-
-            final StripeResponse lastResponse = subscriptionCollection.getLastResponse();
-            if (lastResponse.code() == HttpStatus.OK.value()) {
-                return AhResponse.buildOk(subscriptionCollection.getData());
-            }
-            final String errMsg = String.format("Error getting subscriptions : Code %d \n%s", lastResponse.code(),
-                    StripeHelper.objectToJson(subscriptionCollection));
-            log.error(errMsg);
-            return AhResponse.internalError(errMsg);
-
-        } catch (Exception e) {
-            log.error("Error Fetching Subscription.", e);
-            return AhResponse.internalError(e);
-        }
+        return buildSubscriptionCollectionResponse(subscriptionsGet(subscriptionListParamsString));
     }
 
-    @GetMapping("/subscription/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<AhResponse<Subscription>> getSubscription(@PathVariable("id") String subscriptionCid) {
-        try {
-            final Subscription subscription = Subscription.retrieve(subscriptionCid);
-            return buildStripeResponseSubscription(subscription, "Error fetching Subscription");
-        } catch (Exception e) {
-            log.error("Error Fetching Subscription.", e);
-            return AhResponse.internalError(e);
-        }
+        return buildSubscriptionResponse(subscriptionGet(subscriptionCid), "Error fetching subscription");
     }
 
-    @PostMapping("/subscription")
+    @PostMapping("/")
     public ResponseEntity<AhResponse<Subscription>> createSubscription(@RequestBody String subscriptionCreateParamString) {
-        try {
-            final SubscriptionCreateParams subscriptionCreateParams = StripeHelper.getGson().fromJson(subscriptionCreateParamString, SubscriptionCreateParams.class);
-            final Subscription subscriptionNew = Subscription.create(subscriptionCreateParams);
-            return buildStripeResponseSubscription(subscriptionNew, "Error Creating Subscription");
-        } catch (Exception e) {
-            log.error("Error Creating Subscription.", e);
-            return AhResponse.internalError(e);
-        }
+        return buildSubscriptionResponse(subscriptionCreate(subscriptionCreateParamString),
+                "Error creating subscription");
     }
 
-    @PutMapping("/subscription/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<AhResponse<Subscription>> updateSubscription(@PathVariable("id") String subscriptionCid, @RequestBody String subscriptionUpdateParamString) {
-        try {
-            final SubscriptionUpdateParams subscriptionUpdateParams = StripeHelper.getGson().fromJson(subscriptionUpdateParamString, SubscriptionUpdateParams.class);
-            final Subscription existingSubscription = Subscription.retrieve(subscriptionCid);
-            final Subscription updatedSubscription = existingSubscription.update(subscriptionUpdateParams);
-            return buildStripeResponseSubscription(updatedSubscription, "Error Updating Subscription");
-        } catch (Exception e) {
-            log.error("Error Updating Subscription.", e);
-            return AhResponse.internalError(e);
-        }
+        return buildSubscriptionResponse(subscriptionUpdate(subscriptionCid, subscriptionUpdateParamString),
+                "Error updating subscription");
     }
 
-    // No delete for Subscription, just Cancel.
-    @DeleteMapping("/subscription/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<AhResponse<Subscription>> cancelSubscription(@PathVariable("id") String subscriptionCid) {
-        try {
-            final Subscription subscription = Subscription.retrieve(subscriptionCid);
-            final Subscription deletedSubscription = subscription.cancel();
-            return buildStripeResponseSubscription(deletedSubscription, "Error Subscription.");
-        } catch (Exception e) {
-            log.error("Error Removing Subscription.", e);
-            return AhResponse.internalError(e);
-        }
-    }
-
-    private ResponseEntity<AhResponse<Subscription>> buildStripeResponseSubscription(Subscription subscription, String msg) {
-        final StripeResponse lastResponse = subscription.getLastResponse();
-        if (lastResponse.code() == HttpStatus.OK.value()) {
-            try {
-                final Subscription fetchedSubscription = StripeHelper.jsonToObject(lastResponse.body(), Subscription.class);
-                return AhResponse.buildOk(fetchedSubscription);
-            } catch (Exception e) {
-                subscription.setLastResponse(null);
-                return AhResponse.buildOk(subscription);
-            }
-        }
-        return ahResponseError(msg, lastResponse.code(), subscription);
+        return buildSubscriptionResponse(subscriptionCancel(subscriptionCid),
+                "Error canceling subscription");
     }
 }

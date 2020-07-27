@@ -6,7 +6,7 @@ from stripe_rest import ah_debug, ah_constant
 baseurl = ah_constant.baseurl()
 
 def create_subscription_item(params):
-    response = requests.post(baseurl + "/subscriptionItem", params)
+    response = requests.post(baseurl + "/subscriptionItems", params)
     print("Create Subscription Item : " + str(response))
 
     subscription_item_response = json.loads(response.content)
@@ -15,7 +15,7 @@ def create_subscription_item(params):
     return subscription_item_response['entity']
 
 def get_subscription_item(subscription_item_cid):
-    response = requests.get(baseurl + "/subscriptionItem/{}".format(subscription_item_cid))
+    response = requests.get(baseurl + "/subscriptionItems/{}".format(subscription_item_cid))
     print("Get SubscriptionItem : " + str(response))
     subscription_item_response = json.loads(response.content)
 
@@ -24,10 +24,10 @@ def get_subscription_item(subscription_item_cid):
     return subscription_item_response['entity']
 
 def delete_subscription_item(subscription_item_cid):
-    response = requests.delete(baseurl + "/subscriptionItem/{}".format(subscription_item_cid))
+    response = requests.delete(baseurl + "/subscriptionItems/{}".format(subscription_item_cid))
     print("Delete SubscriptionItem : " + str(response))
 
-    response = requests.delete(baseurl + "/subscriptionItem/{}".format(subscription_item_cid))
+    response = requests.delete(baseurl + "/subscriptionItems/{}".format(subscription_item_cid))
     print("Delete SubscriptionItem : " + str(response))
     delete_response = json.loads(response.content)
 

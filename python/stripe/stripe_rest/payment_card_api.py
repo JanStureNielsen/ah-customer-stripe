@@ -6,7 +6,7 @@ from stripe_rest import ah_debug, ah_constant
 baseurl = ah_constant.baseurl()
 
 def create_payment_card(customer_cid, params):
-    url = baseurl + "/paymentCard/{}".format(customer_cid)
+    url = baseurl + "/paymentCards/{}".format(customer_cid)
     response = requests.post(url, params)
     print("Create Payment Card : " + str(response))
 
@@ -16,7 +16,7 @@ def create_payment_card(customer_cid, params):
     return card_response['entity']
 
 def get_payment_card(customer_cid, card_cid):
-    response = requests.get(baseurl + "/paymentCard/{}/{}".format(customer_cid, card_cid))
+    response = requests.get(baseurl + "/paymentCards/{}/{}".format(customer_cid, card_cid))
     print("Get Payment Card : " + str(response))
     card_response = json.loads(response.content)
 
@@ -25,10 +25,10 @@ def get_payment_card(customer_cid, card_cid):
     return card_response['entity']
 
 def delete_payment_card(card_cid):
-    response = requests.delete(baseurl + "/paymentCard/{}".format(card_cid))
+    response = requests.delete(baseurl + "/paymentCards/{}".format(card_cid))
     print("Delete Payment Card : " + str(response))
 
-    response = requests.delete(baseurl + "/paymentCard/{}".format(card_cid))
+    response = requests.delete(baseurl + "/paymentCards/{}".format(card_cid))
     print("Delete Payment Card : " + str(response))
     delete_response = json.loads(response.content)
 

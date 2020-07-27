@@ -6,7 +6,7 @@ from stripe_rest import ah_debug, ah_constant
 baseurl = ah_constant.baseurl()
 
 def create_price(params):
-    response = requests.post(baseurl + "/price", params)
+    response = requests.post(baseurl + "/prices/", params)
     print("Create Product : " + str(response))
     price_response = json.loads(response.content)
 
@@ -15,7 +15,7 @@ def create_price(params):
     return price_response['entity']
 
 def get_price(price_cid):
-    response = requests.get(baseurl + "/price/{}".format(price_cid))
+    response = requests.get(baseurl + "/prices/{}".format(price_cid))
     print("Get Product : " + str(response))
     price_response = json.loads(response.content)
 
@@ -24,7 +24,7 @@ def get_price(price_cid):
     return price_response['entity']
 
 def delete_price(price_cid):
-    response = requests.delete(baseurl + "/price/{}".format(price_cid))
+    response = requests.delete(baseurl + "/prices/{}".format(price_cid))
     print("Delete Price : " + str(response))
     delete_response = json.loads(response.content)
 
@@ -34,7 +34,7 @@ def delete_price(price_cid):
 
 def list_prices():
     list_dict = """{"limit": 999999, "active": True}"""
-    response = requests.request(method = "get", url = baseurl + "/prices", data = list_dict)
+    response = requests.request(method = "get", url = baseurl + "/prices/", data = list_dict)
     print("List Price : " + str(response))
     prices_response = json.loads(response.content)
 

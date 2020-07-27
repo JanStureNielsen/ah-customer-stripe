@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1/health")
 @Slf4j
 public class StripeControllerHealth {
 
-    @GetMapping("/health")
+    @GetMapping
     public ResponseEntity<String> getHealth() {
         try {
             return ResponseEntity.ok().body("OK");

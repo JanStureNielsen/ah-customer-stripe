@@ -6,7 +6,7 @@ from stripe_rest import ah_debug, ah_constant
 baseurl = ah_constant.baseurl()
 
 def create_subscription_schedule(params):
-    response = requests.post(baseurl + "/subscriptionSchedule", params)
+    response = requests.post(baseurl + "/subscriptionSchedules/", params)
     print("Create Subscription Schedule : " + str(response))
 
     subscription_schedule_response = json.loads(response.content)
@@ -15,7 +15,7 @@ def create_subscription_schedule(params):
     return subscription_schedule_response['entity']
 
 def get_subscription_schedule(subscription_schedule_cid):
-    response = requests.get(baseurl + "/subscriptionSchedule/{}".format(subscription_schedule_cid))
+    response = requests.get(baseurl + "/subscriptionSchedules/{}".format(subscription_schedule_cid))
     print("Get SubscriptionSchedule : " + str(response))
     subscription_schedule_response = json.loads(response.content)
 
@@ -24,7 +24,7 @@ def get_subscription_schedule(subscription_schedule_cid):
     return subscription_schedule_response['entity']
 
 def delete_subscription_schedule(subscription_schedule_cid):
-    response = requests.delete(baseurl + "/subscriptionSchedule/{}".format(subscription_schedule_cid))
+    response = requests.delete(baseurl + "/subscriptionSchedules/{}".format(subscription_schedule_cid))
     print("Delete SubscriptionSchedule : " + str(response))
     delete_response = json.loads(response.content)
 
@@ -33,7 +33,7 @@ def delete_subscription_schedule(subscription_schedule_cid):
     return delete_response['entity']
 
 def list_subscription_schedules(customer_cid):
-    response = requests.request(method = "get", url = baseurl + "/subscriptionSchedules", data = '{ "customer": "' + customer_cid + '" }')
+    response = requests.request(method = "get", url = baseurl + "/subscriptionSchedules/", data = '{ "customer": "' + customer_cid + '" }')
     print("List SubscriptionSchedule : " + str(response))
     subscription_schedules_response = json.loads(response.content)
 
