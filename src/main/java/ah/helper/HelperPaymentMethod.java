@@ -4,7 +4,8 @@ import static ah.customer.stripe.StripeParam.PAYMENT_METHOD_ATTACH;
 import static ah.customer.stripe.StripeParam.PAYMENT_METHOD_CREATE;
 import static ah.customer.stripe.StripeParam.PAYMENT_METHOD_LIST;
 import static ah.helper.StripeHelper.runReturnOrThrow;
-import static ah.helper.StripeRequestHelper.ahResponseError;
+import static ah.rest.AhResponse.buildOk;
+import static ah.rest.AhResponse.internalError;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,28 +75,28 @@ public class HelperPaymentMethod {
         if (lastResponse.code() == HttpStatus.OK.value()) {
             try {
                 final PaymentMethod fetchedPaymentMethod = StripeHelper.jsonToObject(lastResponse.body(), PaymentMethod.class);
-                return AhResponse.buildOk(fetchedPaymentMethod);
+                return buildOk(fetchedPaymentMethod);
             } catch (Exception e) {
                 paymentMethod.setLastResponse(null);
-                return AhResponse.buildOk(paymentMethod);
+                return buildOk(paymentMethod);
             }
         }
-        return ahResponseError(msg, lastResponse.code(), paymentMethod);
+        return internalError(msg, lastResponse.code(), paymentMethod);
     }
 
     public static ResponseEntity<AhResponse<PaymentMethod>> buildCollectionResponse(PaymentMethodCollection paymentMethodCollection) {
         try {
             final StripeResponse lastResponse = paymentMethodCollection.getLastResponse();
             if (lastResponse.code() == HttpStatus.OK.value()) {
-                return AhResponse.buildOk(paymentMethodCollection.getData());
+                return buildOk(paymentMethodCollection.getData());
             }
             final String errMsg = String.format("Error getting PaymentMethods : Code %d \n%s", lastResponse.code(),
                     StripeHelper.objectToJson(paymentMethodCollection));
             log.error(errMsg);
-            return AhResponse.internalError(errMsg);
+            return internalError(errMsg);
         } catch (Exception e) {
             log.error("Error Fetching PaymentMethod.", e);
-            return AhResponse.internalError(e);
+            return internalError(e);
         }
     }
 }

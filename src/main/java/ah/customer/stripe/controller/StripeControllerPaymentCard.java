@@ -3,11 +3,11 @@ package ah.customer.stripe.controller;
 import static ah.helper.AhConstant.STRIPE_REST_LARGE_LIMIT;
 import static ah.helper.HelperPaymentCard.buildPaymentCardCollectionResponse;
 import static ah.helper.HelperPaymentCard.buildPaymentCardResponse;
-import static ah.helper.HelperPaymentCard.paymentCardCreate;
-import static ah.helper.HelperPaymentCard.paymentCardDetach;
-import static ah.helper.HelperPaymentCard.paymentCardGet;
-import static ah.helper.HelperPaymentCard.paymentCardUpdate;
-import static ah.helper.HelperPaymentCard.paymentCardsGet;
+import static ah.helper.HelperPaymentCard.cardCreate;
+import static ah.helper.HelperPaymentCard.cardDelete;
+import static ah.helper.HelperPaymentCard.cardGet;
+import static ah.helper.HelperPaymentCard.cardUpdate;
+import static ah.helper.HelperPaymentCard.cardListGet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +38,7 @@ public class StripeControllerPaymentCard {
     @PostMapping("/{customerCid}")
     public ResponseEntity<AhResponse<Card>> createCard(
             @PathVariable("customerCid") String customerCid, @RequestBody String paymentSourceCollectionCreateParamsString) {
-        return buildPaymentCardResponse(paymentCardCreate(customerCid, paymentSourceCollectionCreateParamsString),
+        return buildPaymentCardResponse(cardCreate(customerCid, paymentSourceCollectionCreateParamsString),
                 "Error creating payment card");
     }
 
@@ -50,27 +50,27 @@ public class StripeControllerPaymentCard {
     @GetMapping("/{customerCid}")
     public ResponseEntity<AhResponse<Card>> getCardsForCustomer(
             @PathVariable("customerCid") String customerCid, @RequestBody String paymentCardListParamString) {
-        return buildPaymentCardCollectionResponse(paymentCardsGet(customerCid, paymentCardListParamString));
+        return buildPaymentCardCollectionResponse(cardListGet(customerCid, paymentCardListParamString));
     }
 
     @GetMapping("/{customerCid}/{paymentCardCid}")
     public ResponseEntity<AhResponse<Card>> getCard(
             @PathVariable("customerCid") String customerCid, @PathVariable("paymentCardCid") String paymentCardCid) {
-        return buildPaymentCardResponse(paymentCardGet(customerCid, paymentCardCid), "Error fetching payment card");
+        return buildPaymentCardResponse(cardGet(customerCid, paymentCardCid), "Error fetching payment card");
     }
 
     @PutMapping("/{paymentCardCid}")
     public ResponseEntity<AhResponse<Card>> updateCard(
             @PathVariable("customerCid") String customerCid, @PathVariable("paymentCardCid") String paymentCardCid,
             @RequestBody String cardUpdateParamsString) {
-        return buildPaymentCardResponse(paymentCardUpdate(customerCid, paymentCardCid, cardUpdateParamsString),
+        return buildPaymentCardResponse(cardUpdate(customerCid, paymentCardCid, cardUpdateParamsString),
                 "Error updating payment card");
     }
 
     @DeleteMapping("/detach/{id}")
     public ResponseEntity<AhResponse<Card>> detachCardFromCustomer(
             @PathVariable("customerCid") String customerCid, @PathVariable("paymentCardCid") String paymentCardCid) {
-        return buildPaymentCardResponse(paymentCardDetach(customerCid, paymentCardCid),
+        return buildPaymentCardResponse(cardDelete(customerCid, paymentCardCid),
                 "Error detaching payment card");
     }
 }

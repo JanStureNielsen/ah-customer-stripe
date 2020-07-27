@@ -1,20 +1,25 @@
 package ah.helper;
 
-import ah.rest.AhResponse;
+import static ah.customer.stripe.StripeParam.PRICE_CREATE;
+import static ah.customer.stripe.StripeParam.PRICE_LIST;
+import static ah.customer.stripe.StripeParam.PRICE_UPDATE;
+import static ah.helper.StripeHelper.inactive;
+import static ah.helper.StripeHelper.runReturnOrThrow;
+import static ah.rest.AhResponse.buildOk;
+import static ah.rest.AhResponse.internalError;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import com.stripe.model.Price;
 import com.stripe.model.PriceCollection;
 import com.stripe.net.StripeResponse;
 import com.stripe.param.PriceCreateParams;
 import com.stripe.param.PriceListParams;
 import com.stripe.param.PriceUpdateParams;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import static ah.customer.stripe.StripeParam.*;
-import static ah.helper.StripeHelper.inactive;
-import static ah.helper.StripeHelper.runReturnOrThrow;
-import static ah.helper.StripeRequestHelper.ahResponseError;
+import ah.rest.AhResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HelperPrice {
@@ -57,25 +62,25 @@ public class HelperPrice {
         final StripeResponse lastResponse = price.getLastResponse();
         if (lastResponse.code() == HttpStatus.OK.value()) {
             price.setLastResponse(null);
-            return AhResponse.buildOk(price);
+            return buildOk(price);
         }
-        return ahResponseError(msg, lastResponse.code(), price);
+        return internalError(msg, lastResponse.code(), price);
     }
 
     public static ResponseEntity<AhResponse<Price>> buildPriceCollectionResponse(PriceCollection priceCollection) {
         try {
             final StripeResponse lastResponse = priceCollection.getLastResponse();
             if (lastResponse.code() == HttpStatus.OK.value()) {
-                return AhResponse.buildOk(priceCollection.getData());
+                return buildOk(priceCollection.getData());
             }
             final String msg = String.format("Error getting prices : Code %d \n%s", lastResponse.code(),
                     StripeHelper.objectToJson(priceCollection));
             log.error(msg);
-            return AhResponse.internalError(msg);
+            return internalError(msg);
 
         } catch (Exception e) {
             log.error("Error Fetching Price.", e);
-            return AhResponse.internalError(e);
+            return internalError(e);
         }
     }
 }

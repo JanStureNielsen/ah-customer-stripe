@@ -4,7 +4,8 @@ import static ah.customer.stripe.StripeParam.PAYMENT_SOURCE_CREATE;
 import static ah.customer.stripe.StripeParam.PAYMENT_SOURCE_LIST;
 import static ah.customer.stripe.StripeParam.PAYMENT_SOURCE_UPDATE;
 import static ah.helper.StripeHelper.runReturnOrThrow;
-import static ah.helper.StripeRequestHelper.ahResponseError;
+import static ah.rest.AhResponse.buildOk;
+import static ah.rest.AhResponse.internalError;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,9 +79,9 @@ public class HelperPaymentSource {
         final StripeResponse lastResponse = paymentSource.getLastResponse();
         if (lastResponse.code() == HttpStatus.OK.value()) {
             final Source fetchedSource = StripeHelper.jsonToObject(lastResponse.body(), Source.class);
-            return AhResponse.buildOk(fetchedSource);
+            return buildOk(fetchedSource);
         }
-        return ahResponseError(msg, lastResponse.code(), paymentSource);
+        return internalError(msg, lastResponse.code(), paymentSource);
     }
 
     public static ResponseEntity<AhResponse<Source>> buildPaymentSourceCollectionResponse(
@@ -90,15 +91,15 @@ public class HelperPaymentSource {
             if (lastResponse.code() == HttpStatus.OK.value()) {
                 final List<Source> sources =
                         paymentSourceCollection.getData().stream().map(ps -> (Source) ps).collect(Collectors.toList());
-                return AhResponse.buildOk(sources);
+                return buildOk(sources);
             }
             final String errMsg = String.format("Error getting Sources : Code %d \n%s", lastResponse.code(),
                     StripeHelper.objectToJson(paymentSourceCollection));
             log.error(errMsg);
-            return AhResponse.internalError(errMsg);
+            return internalError(errMsg);
         } catch (Exception e) {
             log.error("Error Fetching Source.", e);
-            return AhResponse.internalError(e);
+            return internalError(e);
         }
     }
 }

@@ -1,19 +1,24 @@
 package ah.helper;
 
-import ah.rest.AhResponse;
+import static ah.customer.stripe.StripeParam.SUBSCRIPTION_SCHEDULE_CREATE;
+import static ah.customer.stripe.StripeParam.SUBSCRIPTION_SCHEDULE_LIST;
+import static ah.customer.stripe.StripeParam.SUBSCRIPTION_SCHEDULE_UPDATE;
+import static ah.helper.StripeHelper.runReturnOrThrow;
+import static ah.rest.AhResponse.buildOk;
+import static ah.rest.AhResponse.internalError;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import com.stripe.model.SubscriptionSchedule;
 import com.stripe.model.SubscriptionScheduleCollection;
 import com.stripe.net.StripeResponse;
 import com.stripe.param.SubscriptionScheduleCreateParams;
 import com.stripe.param.SubscriptionScheduleListParams;
 import com.stripe.param.SubscriptionScheduleUpdateParams;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import static ah.customer.stripe.StripeParam.*;
-import static ah.helper.StripeHelper.runReturnOrThrow;
-import static ah.helper.StripeRequestHelper.ahResponseError;
+import ah.rest.AhResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HelperSubscriptionSchedule {
@@ -58,13 +63,13 @@ public class HelperSubscriptionSchedule {
         if (lastResponse.code() == HttpStatus.OK.value()) {
             try {
                 final SubscriptionSchedule fetchedSubscriptionSchedule = StripeHelper.jsonToObject(lastResponse.body(), SubscriptionSchedule.class);
-                return AhResponse.buildOk(fetchedSubscriptionSchedule);
+                return buildOk(fetchedSubscriptionSchedule);
             } catch (Exception e) {
                 subscriptionSchedule.setLastResponse(null);
-                return AhResponse.buildOk(subscriptionSchedule);
+                return buildOk(subscriptionSchedule);
             }
         }
-        return ahResponseError(msg, lastResponse.code(), subscriptionSchedule);
+        return internalError(msg, lastResponse.code(), subscriptionSchedule);
     }
 
     public static ResponseEntity<AhResponse<SubscriptionSchedule>> buildSubscriptionScheduleCollectionResponse(
@@ -72,16 +77,16 @@ public class HelperSubscriptionSchedule {
         try {
             final StripeResponse lastResponse = subscriptionCollection.getLastResponse();
             if (lastResponse.code() == HttpStatus.OK.value()) {
-                return AhResponse.buildOk(subscriptionCollection.getData());
+                return buildOk(subscriptionCollection.getData());
             }
             final String errMsg = String.format("Error getting subscriptions : Code %d \n%s", lastResponse.code(),
                     StripeHelper.objectToJson(subscriptionCollection));
             log.error(errMsg);
-            return AhResponse.internalError(errMsg);
+            return internalError(errMsg);
 
         } catch (Exception e) {
             log.error("Error Fetching SubscriptionSchedule.", e);
-            return AhResponse.internalError(e);
+            return internalError(e);
         }
     }
 

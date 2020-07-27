@@ -1,21 +1,24 @@
 package ah.helper;
 
-import ah.rest.AhResponse;
+import static ah.customer.stripe.StripeParam.SUBSCRIPTION_CREATE;
+import static ah.customer.stripe.StripeParam.SUBSCRIPTION_LIST;
+import static ah.customer.stripe.StripeParam.SUBSCRIPTION_UPDATE;
+import static ah.helper.StripeHelper.runReturnOrThrow;
+import static ah.rest.AhResponse.buildOk;
+import static ah.rest.AhResponse.internalError;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import com.stripe.model.Subscription;
 import com.stripe.model.SubscriptionCollection;
 import com.stripe.net.StripeResponse;
 import com.stripe.param.SubscriptionCreateParams;
 import com.stripe.param.SubscriptionListParams;
 import com.stripe.param.SubscriptionUpdateParams;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import static ah.customer.stripe.StripeParam.*;
-import static ah.helper.StripeHelper.runReturnOrThrow;
-import static ah.helper.StripeRequestHelper.ahResponseError;
+import ah.rest.AhResponse;
 
-@Slf4j
 public class HelperSubscription {
     private HelperSubscription() {
     }
@@ -59,30 +62,33 @@ public class HelperSubscription {
         if (lastResponse.code() == HttpStatus.OK.value()) {
             try {
                 final Subscription fetchedSubscription = StripeHelper.jsonToObject(lastResponse.body(), Subscription.class);
-                return AhResponse.buildOk(fetchedSubscription);
+                return buildOk(fetchedSubscription);
             } catch (Exception e) {
                 subscription.setLastResponse(null);
-                return AhResponse.buildOk(subscription);
+                return buildOk(subscription);
             }
         }
-        return ahResponseError(msg, lastResponse.code(), subscription);
+        return internalError(msg, lastResponse.code(), subscription);
     }
 
     public static ResponseEntity<AhResponse<Subscription>> buildSubscriptionCollectionResponse(SubscriptionCollection subscriptionCollection) {
+        String errorMessage = null;
+        Exception errorCause = null;
+
         try {
             final StripeResponse lastResponse = subscriptionCollection.getLastResponse();
             if (lastResponse.code() == HttpStatus.OK.value()) {
-                return AhResponse.buildOk(subscriptionCollection.getData());
+                return buildOk(subscriptionCollection.getData());
             }
-            final String errMsg = String.format("Error getting subscriptions : Code %d \n%s", lastResponse.code(),
+            errorMessage = String.format("Error getting subscriptions : Code %d \n%s", lastResponse.code(),
                     StripeHelper.objectToJson(subscriptionCollection));
-            log.error(errMsg);
-            return AhResponse.internalError(errMsg);
 
-        } catch (
-                Exception e) {
-            log.error("Error Fetching Subscription.", e);
-            return AhResponse.internalError(e);
+        } catch (Exception e) {
+            errorMessage = "Error Fetching Subscription.";
+            errorCause = e;
         }
+
+        return internalError(errorMessage, errorCause);
     }
+
 }

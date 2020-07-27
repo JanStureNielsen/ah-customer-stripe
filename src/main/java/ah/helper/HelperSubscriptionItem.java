@@ -1,21 +1,26 @@
 package ah.helper;
 
-import ah.rest.AhResponse;
+import static ah.customer.stripe.StripeParam.SUBSCRIPTION_ITEM_CREATE;
+import static ah.customer.stripe.StripeParam.SUBSCRIPTION_ITEM_LIST;
+import static ah.customer.stripe.StripeParam.SUBSCRIPTION_ITEM_UPDATE;
+import static ah.helper.StripeHelper.runReturnOrThrow;
+import static ah.rest.AhResponse.buildOk;
+import static ah.rest.AhResponse.internalError;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import com.stripe.model.SubscriptionItem;
 import com.stripe.model.SubscriptionItemCollection;
 import com.stripe.net.StripeResponse;
 import com.stripe.param.SubscriptionItemCreateParams;
 import com.stripe.param.SubscriptionItemListParams;
 import com.stripe.param.SubscriptionItemUpdateParams;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import static ah.customer.stripe.StripeParam.*;
-import static ah.helper.StripeHelper.runReturnOrThrow;
-import static ah.helper.StripeRequestHelper.ahResponseError;
+import ah.rest.AhResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HelperSubscriptionItem {
@@ -59,15 +64,15 @@ public class HelperSubscriptionItem {
         try {
             final StripeResponse lastResponse = subscriptionItemCollection.getLastResponse();
             if (lastResponse.code() == HttpStatus.OK.value()) {
-                return AhResponse.buildOk(subscriptionItemCollection.getData());
+                return buildOk(subscriptionItemCollection.getData());
             }
             final String errMsg = String.format("Error getting subscriptions : Code %d \n%s", lastResponse.code(),
                     StripeHelper.objectToJson(subscriptionItemCollection));
             log.error(errMsg);
-            return AhResponse.internalError(errMsg);
+            return internalError(errMsg);
         } catch (Exception e) {
             log.error("Error Fetching SubscriptionItem.", e);
-            return AhResponse.internalError(e);
+            return internalError(e);
         }
     }
 
@@ -75,9 +80,9 @@ public class HelperSubscriptionItem {
         final StripeResponse lastResponse = subscriptionItem.getLastResponse();
         if (lastResponse.code() == HttpStatus.OK.value()) {
             final SubscriptionItem fetchedSubscriptionItem = StripeHelper.jsonToObject(lastResponse.body(), SubscriptionItem.class);
-            return AhResponse.buildOk(fetchedSubscriptionItem);
+            return buildOk(fetchedSubscriptionItem);
         }
-        return ahResponseError(msg, lastResponse.code(), subscriptionItem);
+        return internalError(msg, lastResponse.code(), subscriptionItem);
     }
 
 }

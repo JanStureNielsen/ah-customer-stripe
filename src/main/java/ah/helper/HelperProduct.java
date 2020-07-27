@@ -1,20 +1,25 @@
 package ah.helper;
 
-import ah.rest.AhResponse;
+import static ah.customer.stripe.StripeParam.PRODUCT_CREATE;
+import static ah.customer.stripe.StripeParam.PRODUCT_LIST;
+import static ah.customer.stripe.StripeParam.PRODUCT_UPDATE;
+import static ah.helper.StripeHelper.inactive;
+import static ah.helper.StripeHelper.runReturnOrThrow;
+import static ah.rest.AhResponse.buildOk;
+import static ah.rest.AhResponse.internalError;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import com.stripe.model.Product;
 import com.stripe.model.ProductCollection;
 import com.stripe.net.StripeResponse;
 import com.stripe.param.ProductCreateParams;
 import com.stripe.param.ProductListParams;
 import com.stripe.param.ProductUpdateParams;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import static ah.customer.stripe.StripeParam.*;
-import static ah.helper.StripeHelper.inactive;
-import static ah.helper.StripeHelper.runReturnOrThrow;
-import static ah.helper.StripeRequestHelper.ahResponseError;
+import ah.rest.AhResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HelperProduct {
@@ -63,24 +68,24 @@ public class HelperProduct {
         final StripeResponse lastResponse = product.getLastResponse();
         if (lastResponse.code() == HttpStatus.OK.value()) {
             final Product fetchedProduct = StripeHelper.jsonToObject(lastResponse.body(), Product.class);
-            return AhResponse.buildOk(fetchedProduct);
+            return buildOk(fetchedProduct);
         }
-        return ahResponseError(msg, lastResponse.code(), product);
+        return internalError(msg, lastResponse.code(), product);
     }
 
     public static ResponseEntity<AhResponse<Product>> buildProductCollectionResponse(ProductCollection productCollection) {
         try {
             final StripeResponse lastResponse = productCollection.getLastResponse();
             if (lastResponse.code() == HttpStatus.OK.value()) {
-                return AhResponse.buildOk(productCollection.getData());
+                return buildOk(productCollection.getData());
             }
             final String errMsg = String.format("Error getting products : Code %d \n%s", lastResponse.code(),
                     StripeHelper.objectToJson(productCollection));
             log.error(errMsg);
-            return AhResponse.internalError(errMsg);
+            return internalError(errMsg);
         } catch (Exception e) {
             log.error("Error Fetching Product.", e);
-            return AhResponse.internalError(e);
+            return internalError(e);
         }
     }
 }

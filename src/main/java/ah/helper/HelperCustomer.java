@@ -4,7 +4,8 @@ import static ah.customer.stripe.StripeParam.CUSTOMER_CREATE;
 import static ah.customer.stripe.StripeParam.CUSTOMER_LIST;
 import static ah.customer.stripe.StripeParam.CUSTOMER_UPDATE;
 import static ah.helper.StripeHelper.runReturnOrThrow;
-import static ah.helper.StripeRequestHelper.ahResponseError;
+import static ah.rest.AhResponse.buildOk;
+import static ah.rest.AhResponse.internalError;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,12 +54,12 @@ public class HelperCustomer {
     public static ResponseEntity<AhResponse<Customer>> buildCustomerCollection(CustomerCollection customerCollection) {
         final StripeResponse lastResponse = customerCollection.getLastResponse();
         if (lastResponse.code() == HttpStatus.OK.value()) {
-            return AhResponse.buildOk(customerCollection.getData());
+            return buildOk(customerCollection.getData());
         }
         final String errMsg = String.format("Error getting customers : Code %d \n%s", lastResponse.code(),
                 StripeHelper.objectToJson(customerCollection));
         log.error(errMsg);
-        return AhResponse.internalError(errMsg);
+        return internalError(errMsg);
     }
 
     public static ResponseEntity<AhResponse<Customer>> buildCustomer(Customer customer, String msg) {
@@ -66,12 +67,12 @@ public class HelperCustomer {
         if (lastResponse.code() == HttpStatus.OK.value()) {
             try {
                 final Customer fetchedCustomer = StripeHelper.jsonToObject(lastResponse.body(), Customer.class);
-                return AhResponse.buildOk(fetchedCustomer);
+                return buildOk(fetchedCustomer);
             } catch (Exception e) {
                 customer.setLastResponse(null);
-                return AhResponse.buildOk(customer);
+                return buildOk(customer);
             }
         }
-        return ahResponseError(msg, lastResponse.code(), customer);
+        return internalError(msg, lastResponse.code(), customer);
     }
 }

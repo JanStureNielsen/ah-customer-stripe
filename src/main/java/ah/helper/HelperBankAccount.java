@@ -4,7 +4,8 @@ import static ah.customer.stripe.StripeParam.BANK_ACCOUNT_CREATE;
 import static ah.customer.stripe.StripeParam.BANK_ACCOUNT_LIST;
 import static ah.customer.stripe.StripeParam.BANK_ACCOUNT_UPDATE;
 import static ah.helper.StripeHelper.runReturnOrThrow;
-import static ah.helper.StripeRequestHelper.ahResponseError;
+import static ah.rest.AhResponse.buildOk;
+import static ah.rest.AhResponse.internalError;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,9 +72,9 @@ public class HelperBankAccount {
         final StripeResponse lastResponse = paymentBankAccount.getLastResponse();
         if (lastResponse.code() == HttpStatus.OK.value()) {
             final BankAccount fetchedBankAccount = StripeHelper.jsonToObject(lastResponse.body(), BankAccount.class);
-            return AhResponse.buildOk(fetchedBankAccount);
+            return buildOk(fetchedBankAccount);
         }
-        return ahResponseError(msg, lastResponse.code(), paymentBankAccount);
+        return internalError(msg, lastResponse.code(), paymentBankAccount);
     }
 
     public static ResponseEntity<AhResponse<BankAccount>> buildBankAccountCollectionResponse(PaymentSourceCollection bankAccountCollection) {
@@ -82,15 +83,15 @@ public class HelperBankAccount {
             if (lastResponse.code() == HttpStatus.OK.value()) {
                 final List<BankAccount> bankAccounts =
                         bankAccountCollection.getData().stream().map(ps -> (BankAccount) ps).collect(Collectors.toList());
-                return AhResponse.buildOk(bankAccounts);
+                return buildOk(bankAccounts);
             }
             final String errMsg = String.format("Error getting BankAccounts : Code %d \n%s", lastResponse.code(),
                     StripeHelper.objectToJson(bankAccountCollection));
             log.error(errMsg);
-            return AhResponse.internalError(errMsg);
+            return internalError(errMsg);
         } catch (Exception e) {
             log.error("Error Fetching BankAccounts.", e);
-            return AhResponse.internalError(e);
+            return internalError(e);
         }
     }
 
