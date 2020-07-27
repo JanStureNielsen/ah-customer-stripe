@@ -18,9 +18,7 @@ import com.stripe.param.CustomerListParams;
 import com.stripe.param.CustomerUpdateParams;
 
 import ah.rest.AhResponse;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class HelperCustomer {
     private HelperCustomer() {
     }
@@ -56,10 +54,8 @@ public class HelperCustomer {
         if (lastResponse.code() == HttpStatus.OK.value()) {
             return buildOk(customerCollection.getData());
         }
-        final String errMsg = String.format("Error getting customers : Code %d \n%s", lastResponse.code(),
-                StripeHelper.objectToJson(customerCollection));
-        log.error(errMsg);
-        return internalError(errMsg);
+        return internalError(String.format("Error getting customers : Code %d \n%s", lastResponse.code(),
+                StripeHelper.objectToJson(customerCollection)));
     }
 
     public static ResponseEntity<AhResponse<Customer>> buildCustomer(Customer customer, String msg) {
@@ -75,4 +71,5 @@ public class HelperCustomer {
         }
         return internalError(msg, lastResponse.code(), customer);
     }
+
 }
