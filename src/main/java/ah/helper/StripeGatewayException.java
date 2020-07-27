@@ -7,7 +7,7 @@ public class StripeGatewayException extends RuntimeException {
     }
 
     public StripeGatewayException(Throwable cause, String format, Object... args) {
-        super(String.format(format, args), cause);
+        super(String.format(cause.getMessage() + " : " + format, args), cause);
     }
 
 }

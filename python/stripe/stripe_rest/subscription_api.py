@@ -6,7 +6,7 @@ from stripe_rest import ah_debug, ah_constant
 baseurl = ah_constant.baseurl()
 
 def create_subscription(params):
-    response = requests.post(baseurl + "/subscription", params)
+    response = requests.post(baseurl + "/subscriptions", params)
     print("Create Subscription : " + str(response))
 
     subscription_response = json.loads(response.content)
@@ -15,7 +15,7 @@ def create_subscription(params):
     return subscription_response['entity']
 
 def get_subscription(subscription_cid):
-    response = requests.get(baseurl + "/subscription/{}".format(subscription_cid))
+    response = requests.get(baseurl + "/subscriptions/{}".format(subscription_cid))
     print("Get Subscription : " + str(response))
     subscription_response = json.loads(response.content)
 
@@ -24,7 +24,7 @@ def get_subscription(subscription_cid):
     return subscription_response['entity']
 
 def cancel_subscription(subscription_cid):
-    response = requests.delete(baseurl + "/subscription/{}".format(subscription_cid))
+    response = requests.delete(baseurl + "/subscriptions/{}".format(subscription_cid))
     print("Cancel Subscription : '{}' {}".format(subscription_cid, str(response)))
 
     delete_response = json.loads(response.content)
