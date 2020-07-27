@@ -25,7 +25,7 @@ public class HelperCustomer {
     private HelperCustomer() {
     }
 
-    public static CustomerCollection customersFetch(String customerListParamString) {
+    public static CustomerCollection customerListGet(String customerListParamString) {
         return runReturnOrThrow(() -> Customer.list((CustomerListParams)
                         CUSTOMER_LIST.fromJson(customerListParamString)),
                 "Customer list retrieve failed for '%s'.", customerListParamString);
@@ -37,18 +37,18 @@ public class HelperCustomer {
                 "Customer create failed with parameter string '%s'.", customerCreateParamString);
     }
 
-    public static Customer customerRetrieve(String customerId) {
+    public static Customer customerGet(String customerId) {
         return runReturnOrThrow(() -> Customer.retrieve(customerId), "Customer retrieve failed for '%s'.", customerId);
     }
 
     public static Customer customerUpdate(String customerId, String customerUpdateParamString) {
         return runReturnOrThrow(() ->
-                        customerRetrieve(customerId).update((CustomerUpdateParams) CUSTOMER_UPDATE.fromJson(customerUpdateParamString)),
+                        customerGet(customerId).update((CustomerUpdateParams) CUSTOMER_UPDATE.fromJson(customerUpdateParamString)),
                 "Customer update failed for '%s' with '%s'", customerId, customerUpdateParamString);
     }
 
     public static Customer customerDelete(String customerId) {
-        return runReturnOrThrow(() -> customerRetrieve(customerId).delete(), "Customer delete failed for '%s'", customerId);
+        return runReturnOrThrow(() -> customerGet(customerId).delete(), "Customer delete failed for '%s'", customerId);
     }
 
     public static ResponseEntity<AhResponse<Customer>> buildCustomerCollection(CustomerCollection customerCollection) {

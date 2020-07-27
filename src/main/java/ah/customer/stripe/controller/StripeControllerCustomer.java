@@ -5,9 +5,9 @@ import static ah.helper.HelperCustomer.buildCustomer;
 import static ah.helper.HelperCustomer.buildCustomerCollection;
 import static ah.helper.HelperCustomer.customerCreate;
 import static ah.helper.HelperCustomer.customerDelete;
-import static ah.helper.HelperCustomer.customerRetrieve;
+import static ah.helper.HelperCustomer.customerGet;
 import static ah.helper.HelperCustomer.customerUpdate;
-import static ah.helper.HelperCustomer.customersFetch;
+import static ah.helper.HelperCustomer.customerListGet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,32 +36,33 @@ public class StripeControllerCustomer {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<AhResponse<Customer>> retrieveCustomerList() {
-        return retrieveCustomerList(STRIPE_REST_LARGE_LIMIT);
+    public ResponseEntity<AhResponse<Customer>> customerList() {
+        return customerList(STRIPE_REST_LARGE_LIMIT);
     }
 
     @GetMapping
-    public ResponseEntity<AhResponse<Customer>> retrieveCustomerList(@RequestBody String listParam) {
-        return buildCustomerCollection(customersFetch(listParam));
+    public ResponseEntity<AhResponse<Customer>> customerList(@RequestBody String params) {
+        return buildCustomerCollection(customerListGet(params));
     }
 
     @PostMapping
-    public ResponseEntity<AhResponse<Customer>> createCustomer(@RequestBody String createParam) {
-        return buildCustomer(customerCreate(createParam), "Error creating customer");
+    public ResponseEntity<AhResponse<Customer>> createCustomer(@RequestBody String params) {
+        return buildCustomer(customerCreate(params), "Error creating customer");
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AhResponse<Customer>> retrieveCustomer(@PathVariable("id") String customerId) {
-        return buildCustomer(customerRetrieve(customerId), "Error retrieving customer");
+    public ResponseEntity<AhResponse<Customer>> customer(@PathVariable("id") String customerId) {
+        return buildCustomer(customerGet(customerId), "Error retrieving customer");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AhResponse<Customer>> updateCustomer(@PathVariable("id") String customerId, @RequestBody String updateParam) {
-        return buildCustomer(customerUpdate(customerId, updateParam), "Error updating customer");
+    public ResponseEntity<AhResponse<Customer>> updateCustomer(@PathVariable("id") String customerId, @RequestBody String params) {
+        return buildCustomer(customerUpdate(customerId, params), "Error updating customer");
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<AhResponse<Customer>> deleteCustomer(@PathVariable("id") String customerId) {
         return buildCustomer(customerDelete(customerId), "Error deleting customer");
     }
+
 }
