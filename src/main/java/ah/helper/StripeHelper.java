@@ -8,15 +8,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StripeHelper {
+    private StripeHelper() {
+    }
+
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @SuppressWarnings("serial")
     public static final Map<String, Object> inactive = new HashMap<String, Object>() {{
         put("active", false);
     }};
-
-    private StripeHelper() {
-    }
 
     // TODO: make this private...
     public static Gson getGson() {
